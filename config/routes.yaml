@@ -1,0 +1,7 @@
+index:
+    path: /
+    controller: App\Controller\AppController::renderApp
+
+get_user_boxes:
+    path: /get_user_boxes
+    controller: App\Controller\PageInfoController::getUserBoxes

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Signature{% endblock %}</title>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    {% block javascripts %}
+        <script src="{{ asset('compiled/index_bundle.js') }}"></script>
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+    <div id="root"></div>
+{% endblock %}
+</body>
+</html>

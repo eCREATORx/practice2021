@@ -1,0 +1,9 @@
+
+###> symfony/webpack-encore-pack ###
+/node_modules/
+/public/build/
+/var
+/vendor
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-pack ###

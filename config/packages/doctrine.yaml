@@ -1,0 +1,27 @@
+doctrine:
+    dbal:
+        default_connection: first_connection
+        connections:
+            first_connection:
+                # configure these for your database server
+                url: '%env(resolve:DATABASE_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '8.0'
+                charset: 'utf8mb4'
+                mapping_types:
+                    bit: boolean
+                    enum: boolean
+
+    orm:
+        auto_generate_proxy_classes: false
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: first_connection
+                mappings:
+                    Main:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity\'
+                        alias: App

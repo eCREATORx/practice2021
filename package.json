@@ -1,0 +1,45 @@
+{
+  "name": "practice2021",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/core": "^7.14.6",
+    "@hyperbit/react-bootstrap-form": "^1.0.1",
+    "axios": "^0.21.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-react-app": "^3.1.2",
+    "formik": "^2.2.9",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-jsx": "^1.0.0",
+    "styled-components": "^5.3.0",
+    "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.14.5",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.6",
+    "html-webpack-plugin": "^5.3.2",
+    "style-loader": "^3.0.0",
+    "webpack": "^5.43.0",
+    "webpack-cli": "^4.7.2"
+  },
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eCREATORx/practice2021.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eCREATORx/practice2021/issues"
+  },
+  "homepage": "https://github.com/eCREATORx/practice2021#readme",
+  "description": ""
+}
