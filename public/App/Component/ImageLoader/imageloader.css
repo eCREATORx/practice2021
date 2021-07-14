@@ -1,0 +1,18 @@
+.signature_image {
+    height: 150px;
+    width: 150px;
+    border-radius: 10px;
+}
+
+.input_button {
+    display: block;
+    width: 150px;
+    background: green;
+    color: white;
+    border: 0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    cursor: pointer;
+}

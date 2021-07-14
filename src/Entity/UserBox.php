@@ -13,17 +13,12 @@ class UserBox
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    public $id;
-
-    /**
      * @ORM\Column(type="integer", name="user_id")
      */
     public $userId;
 
     /**
+     * @ORM\Id
      * @ORM\Column(type="integer", name="box_id")
      */
     public $boxId;
@@ -32,11 +27,6 @@ class UserBox
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     public $signature;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getUserId(): ?int
     {

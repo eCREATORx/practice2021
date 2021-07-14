@@ -7,3 +7,9 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-pack ###
+/.idea/vcs.xml
+/public/temp.log
+/.idea/practice2021.iml
+/.idea/php.xml
+/public/compiled
+/.idea/inspectionProfiles/Project_Default.xml

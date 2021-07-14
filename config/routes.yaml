@@ -5,3 +5,7 @@ index:
 get_user_boxes:
     path: /get_user_boxes
     controller: App\Controller\PageInfoController::getUserBoxes
+
+get_signature:
+    path: /get_signature
+    controller: App\Controller\PageInfoController::getSignature

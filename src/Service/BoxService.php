@@ -5,10 +5,12 @@ namespace App\Service;
 use App\Entity\Box;
 use App\Repository\BoxRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 
 class BoxService
 {
-    private $entityManager;
+    private ObjectManager $entityManager;
+
     public function __construct(ManagerRegistry $registry)
     {
         $this->entityManager = $registry->getManager('default');
@@ -19,12 +21,5 @@ class BoxService
         /** @var BoxRepository $boxRepository */
         $boxRepository = $this->entityManager->getRepository(Box::class);
         return $boxRepository->getUserBoxes($userId);
-    }
-
-    public function getAllAddresses(): array
-    {
-        /** @var BoxRepository $boxRepository */
-        $boxRepository = $this->entityManager->getRepository(Box::class);
-        return $boxRepository->getAllAddresses();
     }
 }

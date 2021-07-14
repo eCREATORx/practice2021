@@ -24,48 +24,11 @@ class BoxRepository extends ServiceEntityRepository
     public function getUserBoxes(int $userId): array
     {
         return $this->createQueryBuilder('b')
-            ->select('b.id, b.address')
+            ->select('b.id, b.address, ub.signature')
             ->innerJoin(UserBox::class, 'ub', Join::WITH, 'ub.boxId = b.id')
             ->where('ub.userId = :userId')
             ->setParameter(':userId', $userId)
             ->getQuery()
             ->getArrayResult();
     }
-
-    public function getAllAddresses(): array
-    {
-        return $this->createQueryBuilder('b')
-            ->select('b.address')
-            ->getQuery()
-            ->getArrayResult();
-    }
-
-    // /**
-    //  * @return Box[] Returns an array of Box objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Box
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

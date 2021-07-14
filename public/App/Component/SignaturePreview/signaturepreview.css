@@ -1,0 +1,15 @@
+.preview {
+    margin-left: 50px;
+}
+
+.old_signature p {
+    display: grid;
+}
+
+.new_signature p {
+    display: grid;
+}
+
+span {
+    margin-bottom: 5px;
+}

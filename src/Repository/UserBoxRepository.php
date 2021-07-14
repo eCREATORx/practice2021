@@ -19,32 +19,9 @@ class UserBoxRepository extends ServiceEntityRepository
         parent::__construct($registry, UserBox::class);
     }
 
-    // /**
-    //  * @return UserBox[] Returns an array of UserBox objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getSignature(int $boxId): string
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $box = $this->findOneBy(['boxId' => $boxId]);
+        return $box->getSignature();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?UserBox
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
