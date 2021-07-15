@@ -2,11 +2,11 @@
     margin-left: 50px;
 }
 
-.old_signature p {
+.old_signature div {
     display: grid;
 }
 
-.new_signature p {
+.new_signature div {
     display: grid;
 }
 

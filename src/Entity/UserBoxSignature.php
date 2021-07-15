@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\UserBoxRepository;
+use App\Repository\UserBoxSignatureRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=UserBoxRepository::class)
- * @ORM\Table(name="user_box")
+ * @ORM\Entity(repositoryClass=UserBoxSignatureRepository::class)
+ * @ORM\Table(name="user_box_signature")
  */
-class UserBox
+class UserBoxSignature
 {
     /**
      * @ORM\Id
@@ -24,7 +24,7 @@ class UserBox
     public $boxId;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text")
      */
     public $signature;
 

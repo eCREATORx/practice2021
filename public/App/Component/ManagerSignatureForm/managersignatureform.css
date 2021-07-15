@@ -1,11 +1,8 @@
-.form_select {
+.form-select-input {
     margin-left: 50px;
-}
-
-.signature_select {
     min-width: 250px;
 }
 
-.box_select {
-    min-width: 250px;
+.form-input button {
+    margin-top: 10px;
 }

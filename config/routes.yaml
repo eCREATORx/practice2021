@@ -6,6 +6,10 @@ get_user_boxes:
     path: /get_user_boxes
     controller: App\Controller\PageInfoController::getUserBoxes
 
+get_templates:
+    path: /get_templates
+    controller: App\Controller\PageInfoController::getTemplates
+
 get_signature:
     path: /get_signature
     controller: App\Controller\PageInfoController::getSignature

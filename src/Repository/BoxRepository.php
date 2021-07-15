@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Box;
-use App\Entity\UserBox;
+use App\Entity\UserBoxSignature;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,8 +24,8 @@ class BoxRepository extends ServiceEntityRepository
     public function getUserBoxes(int $userId): array
     {
         return $this->createQueryBuilder('b')
-            ->select('b.id, b.address, ub.signature')
-            ->innerJoin(UserBox::class, 'ub', Join::WITH, 'ub.boxId = b.id')
+            ->select('b.id, b.address')
+            ->innerJoin(UserBoxSignature::class, 'ub', Join::WITH, 'ub.boxId = b.id')
             ->where('ub.userId = :userId')
             ->setParameter(':userId', $userId)
             ->getQuery()

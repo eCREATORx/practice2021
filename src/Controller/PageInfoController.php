@@ -3,7 +3,8 @@
 namespace App\Controller;
 
 use App\Service\BoxService;
-use App\Service\UserBoxService;
+use App\Service\UserBoxSignatureService;
+use App\Service\SignatureTemplateService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,12 +12,14 @@ use Symfony\Component\HttpFoundation\Request;
 class PageInfoController extends AbstractController
 {
     private BoxService $boxService;
-    private UserBoxService $userBoxService;
+    private UserBoxSignatureService $userBoxSignatureService;
+    private SignatureTemplateService $templateService;
 
-    public function __construct(BoxService $boxService, UserBoxService $userBoxService)
+    public function __construct(BoxService $boxService, UserBoxSignatureService $userBoxSignatureService, SignatureTemplateService $templateService)
     {
         $this->boxService = $boxService;
-        $this->userBoxService = $userBoxService;
+        $this->userBoxSignatureService = $userBoxSignatureService;
+        $this->templateService = $templateService;
     }
 
     public function getUserBoxes(Request $request): JsonResponse
@@ -28,6 +31,18 @@ class PageInfoController extends AbstractController
     public function getSignature(Request $request): JsonResponse
     {
         $boxId = $request->get('box_id');
-        return new JsonResponse($this->userBoxService->getSignature($boxId));
+        return new JsonResponse($this->userBoxSignatureService->getSignature($boxId));
+    }
+
+    public function setSignature(Request $request)
+    {
+        $boxId = $request->get('box_id');
+        $signature = "";
+        $this->userBoxSignatureService->setSignature($boxId, $signature);
+    }
+
+    public function getTemplates(): JsonResponse
+    {
+        return new JsonResponse($this->templateService->getTemplates());
     }
 }
