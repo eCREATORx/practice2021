@@ -13,3 +13,4 @@ yarn-error.log
 /.idea/php.xml
 /public/compiled
 /.idea/inspectionProfiles/Project_Default.xml
+/.idea/dataSources.xml

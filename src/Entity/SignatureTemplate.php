@@ -28,6 +28,11 @@ class SignatureTemplate
      */
     private $scheme = [];
 
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $content;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +58,18 @@ class SignatureTemplate
     public function setScheme(array $scheme): self
     {
         $this->scheme = $scheme;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
 
         return $this;
     }

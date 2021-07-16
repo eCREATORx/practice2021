@@ -9,7 +9,15 @@ export default class App extends React.Component {
         super(props);
 
         this.state = {
-            signature: ""
+            signature: "",
+            template: "",
+            photoDir: "",
+            photoName: "",
+            name: "Your name",
+            jobTitle: "Your job title",
+            siteHost: "Your site link",
+            phone: "Your phone number",
+            phoneBookUrl: "Your phone book url"
         }
     }
 
@@ -19,13 +27,29 @@ export default class App extends React.Component {
         })
     }
 
+    setTemplate = (template) => {
+        this.setState({
+            template: template
+        })
+    }
+
     render() {
       return <div className={"app"}>
           <div className={"form"}>
               <ImageLoader />
-              <ManagerSignatureForm onBoxChange={this.setSignature}/>
+              <ManagerSignatureForm onBoxChange={this.setSignature} onTemplateChange={this.setTemplate}/>
           </div>
-          <SignaturePreview signature={this.state.signature}/>
+          <SignaturePreview
+              signature={this.state.signature}
+              template={this.state.template}
+              photoDir={this.state.photoDir}
+              photoName={this.state.photoName}
+              name={this.state.name}
+              jobTitle={this.state.jobTitle}
+              siteHost={this.state.siteHost}
+              phone={this.state.phone}
+              phoneBookUrl={this.state.phoneBookUrl}
+          />
       </div>
     }
 }

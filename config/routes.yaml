@@ -13,3 +13,7 @@ get_templates:
 get_signature:
     path: /get_signature
     controller: App\Controller\PageInfoController::getSignature
+
+get_template_structure:
+    path: /get_template_structure
+    controller: App\Controller\PageInfoController::getTemplateStructure

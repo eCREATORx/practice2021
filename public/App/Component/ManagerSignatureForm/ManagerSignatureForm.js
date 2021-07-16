@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Formik, Form } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import Select from 'react-select';
 import axios from "axios";
+import * as Yup from 'yup';
 import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -62,20 +63,46 @@ export default class ManagerSignatureForm extends React.Component {
         }
     }
 
+    async getTemplateStructure(index) {
+        try {
+            const axiosRequestConfig = {
+                params: {
+                    'template_id': index
+                }
+            };
+
+            const response = await axios.get('/get_template_structure', axiosRequestConfig);
+            this.setState({
+                fields: response.data[0].scheme
+            });
+            this.props.onTemplateChange(response.data[0].content);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     onBoxChange = (selected) => {
         this.getSignature(selected.value);
     }
 
     onSignatureTemplateChange = (selected) => {
-        this.setState({
-            fields: selected.value
-        })
+        this.getTemplateStructure(selected.value);
     }
 
     render() {
         return <Formik
-            initialValues={{}}
+            initialValues={{
+                Name: ''
+            }}
             onSubmit={{}}
+            validateOnChange={false}
+            validateOnBlur={false}
+            validationSchema={Yup.object().shape({
+                Name: Yup.string()
+                    .required('Required'),
+                Phone: Yup.string()
+                    .required('Required')
+            })}
         >
             <Form className={"form-select-input"}>
                 <div>
@@ -83,13 +110,13 @@ export default class ManagerSignatureForm extends React.Component {
                         placeholder={"Box"}
                         options={this.state.boxes.map(box => ({ label: box.address, value: box.id }))}
                         onChange={this.onBoxChange}
-                        className={"box_select"}
+                        className={"box-select"}
                     />
                     <Select
                         placeholder={"Signature"}
-                        options={this.state.templates.map(template => ({ label: template.name, value: template.scheme }))}
+                        options={this.state.templates.map(template => ({ label: template.name, value: template.id }))}
                         onChange={this.onSignatureTemplateChange}
-                        className={"signature_select"}
+                        className={"signature-select"}
                     />
                 </div>
                 {
@@ -97,8 +124,8 @@ export default class ManagerSignatureForm extends React.Component {
                         ? <div className={"form-input"}>
                             {this.state.fields.map(field =>
                                 <div key={field}>
-                                    <label className={"form-label"}>{field}</label>
-                                    <input type={"text"} className={"form-control"}/>
+                                    <label htmlFor={field} className={"form-label"}>{field}</label>
+                                    <Field name={field} type={"text"} className={"form-control"}/>
                                 </div>
                             )}
                             <button type={"submit"} className="btn btn-success">Save signature</button>

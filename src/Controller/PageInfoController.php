@@ -13,13 +13,13 @@ class PageInfoController extends AbstractController
 {
     private BoxService $boxService;
     private UserBoxSignatureService $userBoxSignatureService;
-    private SignatureTemplateService $templateService;
+    private SignatureTemplateService $signatureTemplateService;
 
-    public function __construct(BoxService $boxService, UserBoxSignatureService $userBoxSignatureService, SignatureTemplateService $templateService)
+    public function __construct(BoxService $boxService, UserBoxSignatureService $userBoxSignatureService, SignatureTemplateService $signatureTemplateService)
     {
         $this->boxService = $boxService;
         $this->userBoxSignatureService = $userBoxSignatureService;
-        $this->templateService = $templateService;
+        $this->signatureTemplateService = $signatureTemplateService;
     }
 
     public function getUserBoxes(Request $request): JsonResponse
@@ -34,15 +34,14 @@ class PageInfoController extends AbstractController
         return new JsonResponse($this->userBoxSignatureService->getSignature($boxId));
     }
 
-    public function setSignature(Request $request)
-    {
-        $boxId = $request->get('box_id');
-        $signature = "";
-        $this->userBoxSignatureService->setSignature($boxId, $signature);
-    }
-
     public function getTemplates(): JsonResponse
     {
-        return new JsonResponse($this->templateService->getTemplates());
+        return new JsonResponse($this->signatureTemplateService->getTemplates());
+    }
+
+    public function getTemplateStructure(Request $request): JsonResponse
+    {
+        $templateId = $request->get('template_id');
+        return new JsonResponse($this->signatureTemplateService->getTemplateStructure($templateId));
     }
 }
