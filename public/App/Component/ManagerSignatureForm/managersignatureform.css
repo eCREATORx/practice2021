@@ -14,3 +14,13 @@
 .signature-select {
     margin-top: 10px;
 }
+
+.error-message {
+    margin-top: .25rem;
+    font-size: .875em;
+    color: #dc3545;
+}
+
+.form-control {
+    margin-top: 10px;
+}

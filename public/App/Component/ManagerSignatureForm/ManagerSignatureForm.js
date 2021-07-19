@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, ErrorMessage, Form } from 'formik';
 import Select from 'react-select';
 import axios from "axios";
-import * as Yup from 'yup';
 import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+let initialValues = {};
 
 export default class ManagerSignatureForm extends React.Component {
     constructor(props) {
@@ -13,7 +14,7 @@ export default class ManagerSignatureForm extends React.Component {
         this.state = {
             boxes: [],
             templates: [],
-            fields: ""
+            fields: []
         }
 
         this.getUserBoxes();
@@ -76,6 +77,8 @@ export default class ManagerSignatureForm extends React.Component {
                 fields: response.data[0].scheme
             });
             this.props.onTemplateChange(response.data[0].content);
+
+            this.setInitialValues();
         } catch (error) {
             console.log(error);
         }
@@ -89,20 +92,29 @@ export default class ManagerSignatureForm extends React.Component {
         this.getTemplateStructure(selected.value);
     }
 
+    onSubmit(fields) {
+        alert('SUCCESS!! :-)\n\n' + JSON.stringify(fields, null, 4));
+    }
+
+    validateField(value) {
+        let error;
+        if (!value) {
+            error = 'Required';
+        }
+        return error;
+    }
+
+    setInitialValues() {
+        initialValues = {};
+        this.state.fields.map(field => initialValues[field.replace(/\s/g, '')] = "");
+        console.log(initialValues);
+    }
+
     render() {
         return <Formik
-            initialValues={{
-                Name: ''
-            }}
-            onSubmit={{}}
-            validateOnChange={false}
+            initialValues={initialValues}
             validateOnBlur={false}
-            validationSchema={Yup.object().shape({
-                Name: Yup.string()
-                    .required('Required'),
-                Phone: Yup.string()
-                    .required('Required')
-            })}
+            onSubmit={this.onSubmit}
         >
             <Form className={"form-select-input"}>
                 <div>
@@ -119,14 +131,18 @@ export default class ManagerSignatureForm extends React.Component {
                         className={"signature-select"}
                     />
                 </div>
+                <textarea className={"form-control"}/>
                 {
-                    (this.state.fields)
+                    (this.state.fields.length > 0)
                         ? <div className={"form-input"}>
-                            {this.state.fields.map(field =>
-                                <div key={field}>
-                                    <label htmlFor={field} className={"form-label"}>{field}</label>
-                                    <Field name={field} type={"text"} className={"form-control"}/>
-                                </div>
+                            {this.state.fields.map(field => {
+                                    let fieldName = field.replace(/\s/g, '');
+                                    return <div key={field}>
+                                        <label htmlFor={fieldName} className={"form-label"}>{field}</label>
+                                        <Field name={fieldName} type={"text"} validate={this.validateField} className={"form-control"}/>
+                                        <ErrorMessage name={fieldName} component={"div"} className={"error-message"}/>
+                                    </div>
+                                }
                             )}
                             <button type={"submit"} className="btn btn-success">Save signature</button>
                         </div>
