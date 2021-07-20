@@ -17,3 +17,7 @@ get_signature:
 get_template_structure:
     path: /get_template_structure
     controller: App\Controller\PageInfoController::getTemplateStructure
+
+set_signature:
+    path: /set_signature
+    controller: App\Controller\PageInfoController::setSignature

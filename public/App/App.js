@@ -9,19 +9,21 @@ export default class App extends React.Component {
         super(props);
 
         this.state = {
-            signature: "",
+            previousSignature: "",
             template: "",
+            imageUrl: "",
             name:  "Your name",
             jobTitle: "Your job title",
             siteHost: "Your site host",
             phone: "Your phone",
-            phoneBookUrl: "Your phone book url"
+            phoneBookUrl: "Your phone book url",
+            newSignature: ""
         }
     }
 
-    setSignature = (signature) => {
+    setPreviousSignature = (signature) => {
         this.setState({
-            signature: signature
+            previousSignature: signature
         })
     }
 
@@ -31,20 +33,45 @@ export default class App extends React.Component {
         })
     }
 
+    setTemplateFieldValue = (field, value) => {
+        this.setState({
+            [field] : value
+        })
+    }
+
+    setImageUrl = (url) => {
+        this.setState({
+            imageUrl: url
+        })
+    }
+
+    setNewSignature = (signature) => {
+        this.setState({
+            newSignature: signature
+        })
+    }
+
     render() {
       return <div className={"app"}>
           <div className={"form"}>
-              <ImageLoader />
-              <ManagerSignatureForm onBoxChange={this.setSignature} onTemplateChange={this.setTemplate}/>
+              <ImageLoader onImageChange={this.setImageUrl}/>
+              <ManagerSignatureForm
+                  onBoxChange={this.setPreviousSignature}
+                  onTemplateChange={this.setTemplate}
+                  onInputChange={this.setTemplateFieldValue}
+                  newSignature={this.state.newSignature}
+              />
           </div>
           <SignaturePreview
-              signature={this.state.signature}
+              signature={this.state.previousSignature}
               template={this.state.template}
+              imageUrl={this.state.imageUrl}
               name={this.state.name}
               jobTitle={this.state.jobTitle}
               siteHost={this.state.siteHost}
               phone={this.state.phone}
               phoneBookUrl={this.state.phoneBookUrl}
+              onSignatureChange={this.setNewSignature}
           />
       </div>
     }

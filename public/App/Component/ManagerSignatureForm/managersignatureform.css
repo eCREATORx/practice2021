@@ -12,7 +12,7 @@
 }
 
 .signature-select {
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .error-message {
@@ -21,6 +21,6 @@
     color: #dc3545;
 }
 
-.form-control {
-    margin-top: 10px;
+.form-select-input textarea {
+    margin-top: 20px;
 }

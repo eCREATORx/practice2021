@@ -7,6 +7,19 @@ export default class SignaturePreview extends React.Component {
         super(props);
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.imageUrl !== this.props.imageUrl ||
+            prevProps.name !== this.props.name ||
+            prevProps.jobTitle !== this.props.jobTitle ||
+            prevProps.siteHost !== this.props.siteHost ||
+            prevProps.phone !== this.props.phone ||
+            prevProps.phoneBookUrl !== this.props.phoneBookUrl
+        ) {
+            const signatureHtml = this.parseHtml(this.props.template);
+            this.props.onSignatureChange(signatureHtml);
+        }
+    }
+
     parseHtml(html) {
         let parsedHtml;
         let indexStart = html.indexOf("{");
@@ -16,7 +29,10 @@ export default class SignaturePreview extends React.Component {
             const indexEnd = html.indexOf("}", indexStart);
             const param = html.substring(indexStart, indexEnd + 1);
 
-            if (param === "{this.props.name}") {
+            if (param === "{this.props.imageUrl}") {
+                parsedHtml += this.props.imageUrl;
+            }
+            else if (param === "{this.props.name}") {
                 parsedHtml += this.props.name;
             }
             else if (param === "{this.props.jobTitle}")
@@ -47,6 +63,7 @@ export default class SignaturePreview extends React.Component {
             }
         }
 
+/*        this.props.onSignatureChange(parsedHtml);*/
         return parsedHtml;
     }
 

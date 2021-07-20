@@ -1,6 +1,7 @@
 .preview {
     margin-left: 50px;
     margin-top: 10px;
+    min-width: 322px;
 }
 
 .old_signature div {

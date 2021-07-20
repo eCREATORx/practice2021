@@ -44,4 +44,11 @@ class PageInfoController extends AbstractController
         $templateId = $request->get('template_id');
         return new JsonResponse($this->signatureTemplateService->getTemplateStructure($templateId));
     }
+
+    public function setSignature(Request $request)
+    {
+        $boxId = $request->get('box_id');
+        $signature = $request->get('signature');
+        $this->userBoxSignatureService->setSignature($boxId, $signature);
+    }
 }

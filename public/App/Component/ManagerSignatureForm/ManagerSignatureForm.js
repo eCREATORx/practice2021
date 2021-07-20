@@ -1,11 +1,17 @@
 import * as React from "react";
-import { Formik, Field, ErrorMessage, Form } from 'formik';
+import {Formik, Field, ErrorMessage, Form} from 'formik';
 import Select from 'react-select';
 import axios from "axios";
 import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-let initialValues = {};
+let initialValues = {
+    name: '',
+    jobTitle: '',
+    siteHost: '',
+    phone: '',
+    phoneBookUrl: ''
+};
 
 export default class ManagerSignatureForm extends React.Component {
     constructor(props) {
@@ -14,11 +20,14 @@ export default class ManagerSignatureForm extends React.Component {
         this.state = {
             boxes: [],
             templates: [],
-            fields: []
+            fields: [],
+            boxId: null
         }
 
         this.getUserBoxes();
         this.getTemplates();
+
+        this.reset_button = React.createRef();
     }
 
     async getUserBoxes() {
@@ -77,8 +86,20 @@ export default class ManagerSignatureForm extends React.Component {
                 fields: response.data[0].scheme
             });
             this.props.onTemplateChange(response.data[0].content);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-            this.setInitialValues();
+    async setSignature(boxId, signature) {
+        try {
+            const axiosRequestConfig = {
+                params: {
+                    'box_id': boxId,
+                    'signature': signature
+                }
+            };
+            await axios.get('/set_signature', axiosRequestConfig);
         } catch (error) {
             console.log(error);
         }
@@ -86,14 +107,28 @@ export default class ManagerSignatureForm extends React.Component {
 
     onBoxChange = (selected) => {
         this.getSignature(selected.value);
+        this.setState({
+            boxId: selected.value
+        })
     }
 
     onSignatureTemplateChange = (selected) => {
+        this.reset_button.current.click();
         this.getTemplateStructure(selected.value);
     }
 
-    onSubmit(fields) {
-        alert('SUCCESS!! :-)\n\n' + JSON.stringify(fields, null, 4));
+    onInputChange(event) {
+        this.props.onInputChange(event.target.name, event.target.value);
+    }
+
+    onSubmit = (fields) => {
+        if (this.state.boxId)
+        {
+            console.log(JSON.stringify(fields, null, 4));
+            console.log(this.state.boxId);
+            console.log(this.props.newSignature);
+/*                    this.setSignature(this.state.boxId, this.props.newSignature);*/
+        }
     }
 
     validateField(value) {
@@ -104,11 +139,18 @@ export default class ManagerSignatureForm extends React.Component {
         return error;
     }
 
-    setInitialValues() {
-        initialValues = {};
-        this.state.fields.map(field => initialValues[field.replace(/\s/g, '')] = "");
-        console.log(initialValues);
+    camelize(str) {
+        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+            if (+match === 0) return "";
+            return index === 0 ? match.toLowerCase() : match.toUpperCase();
+        });
     }
+
+    /*    setInitialValues() {
+            let initialValues = {};
+            this.state.fields.map(field => initialValues[field.replace(/\s/g, '')] = "");
+            console.log(initialValues);
+        }*/
 
     render() {
         return <Formik
@@ -116,39 +158,43 @@ export default class ManagerSignatureForm extends React.Component {
             validateOnBlur={false}
             onSubmit={this.onSubmit}
         >
-            <Form className={"form-select-input"}>
-                <div>
-                    <Select
-                        placeholder={"Box"}
-                        options={this.state.boxes.map(box => ({ label: box.address, value: box.id }))}
-                        onChange={this.onBoxChange}
-                        className={"box-select"}
-                    />
-                    <Select
-                        placeholder={"Signature"}
-                        options={this.state.templates.map(template => ({ label: template.name, value: template.id }))}
-                        onChange={this.onSignatureTemplateChange}
-                        className={"signature-select"}
-                    />
-                </div>
-                <textarea className={"form-control"}/>
-                {
-                    (this.state.fields.length > 0)
-                        ? <div className={"form-input"}>
-                            {this.state.fields.map(field => {
-                                    let fieldName = field.replace(/\s/g, '');
-                                    return <div key={field}>
-                                        <label htmlFor={fieldName} className={"form-label"}>{field}</label>
-                                        <Field name={fieldName} type={"text"} validate={this.validateField} className={"form-control"}/>
-                                        <ErrorMessage name={fieldName} component={"div"} className={"error-message"}/>
-                                    </div>
-                                }
-                            )}
-                            <button type={"submit"} className="btn btn-success">Save signature</button>
-                        </div>
-                        : <div/>
-                }
-            </Form>
+            {props => (
+                <Form className={"form-select-input"}>
+                    <div>
+                        <Select
+                            placeholder={"Box"}
+                            options={this.state.boxes.map(box => ({label: box.address, value: box.id}))}
+                            onChange={this.onBoxChange}
+                            className={"box-select"}
+                        />
+                        <Select
+                            placeholder={"Signature"}
+                            options={this.state.templates.map(template => ({label: template.name, value: template.id}))}
+                            onChange={this.onSignatureTemplateChange}
+                            className={"signature-select"}
+                        />
+                    </div>
+                    <textarea className={"form-control"}/>
+                    {
+                        (this.state.fields.length > 0)
+                            ? <div className={"form-input"}>
+                                {this.state.fields.map(field => {
+                                        let fieldName = this.camelize(field);
+                                        return <div key={field}>
+                                            <label htmlFor={fieldName} className={"form-label"}>{field}</label>
+                                            <Field name={fieldName} type={"text"} validate={this.validateField}
+                                                   className={"form-control"} onChange={(e) => {props.handleChange(e); this.onInputChange(e)}}/>
+                                            <ErrorMessage name={fieldName} component={"div"} className={"error-message"}/>
+                                        </div>
+                                    }
+                                )}
+                                <button type={"submit"} className="btn btn-success">Save signature</button>
+                            </div>
+                            : <div/>
+                    }
+                    <button type={"reset"} ref={this.reset_button} style={{display: 'none'}}>Reset fields</button>
+                </Form>
+            )}
         </Formik>
     }
 }

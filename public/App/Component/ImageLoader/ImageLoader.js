@@ -24,8 +24,8 @@ export default class ImageLoader extends React.Component {
 
         if (extension === "png" && imageSize <= 5000000)
         {
-            window.alert("Image is good!");
             this.signature_image.current.src = URL.createObjectURL(image);
+            this.props.onImageChange(this.signature_image.current.src);
         }
         else
         {
