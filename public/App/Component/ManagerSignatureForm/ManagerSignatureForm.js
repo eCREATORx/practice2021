@@ -28,6 +28,7 @@ export default class ManagerSignatureForm extends React.Component {
         this.getTemplates();
 
         this.reset_button = React.createRef();
+        this.box_select = React.createRef();
     }
 
     async getUserBoxes() {
@@ -118,39 +119,47 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     onInputChange(event) {
+        event.target.value ? event.target.classList.remove('is-invalid') : event.target.classList.add('is-invalid');
         this.props.onInputChange(event.target.name, event.target.value);
     }
 
-    onSubmit = (fields) => {
-        if (this.state.boxId)
-        {
-            console.log(JSON.stringify(fields, null, 4));
-            console.log(this.state.boxId);
-            console.log(this.props.newSignature);
-/*                    this.setSignature(this.state.boxId, this.props.newSignature);*/
+    onSubmit = () => {
+        if (this.state.boxId) {
+            this.setSignature(this.state.boxId, this.props.newSignature);
+            this.getSignature(this.state.boxId);
         }
+    }
+
+    onTextAreaChange(event) {
+        this.props.onTextAreaChange('<div class="mail-body">' + event.target.value + '</div>');
+    }
+
+    checkInvalidStyle = () => {
+        this.state.fields.map(field => {
+            let fieldName = this.camelize(field);
+            let curField = document.getElementById(fieldName);
+            if (!curField.value)
+            {
+                curField.classList.add("is-invalid");
+            }
+        })
     }
 
     validateField(value) {
         let error;
         if (!value) {
-            error = 'Required';
+            error = ' Required';
         }
+
         return error;
     }
 
     camelize(str) {
-        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
             if (+match === 0) return "";
             return index === 0 ? match.toLowerCase() : match.toUpperCase();
         });
     }
-
-    /*    setInitialValues() {
-            let initialValues = {};
-            this.state.fields.map(field => initialValues[field.replace(/\s/g, '')] = "");
-            console.log(initialValues);
-        }*/
 
     render() {
         return <Formik
@@ -163,6 +172,7 @@ export default class ManagerSignatureForm extends React.Component {
                     <div>
                         <Select
                             placeholder={"Box"}
+                            ref={this.box_select}
                             options={this.state.boxes.map(box => ({label: box.address, value: box.id}))}
                             onChange={this.onBoxChange}
                             className={"box-select"}
@@ -174,7 +184,10 @@ export default class ManagerSignatureForm extends React.Component {
                             className={"signature-select"}
                         />
                     </div>
-                    <textarea className={"form-control"}/>
+                    <textarea name={"textArea"} className={"form-control"} onChange={(e) => {
+                        props.handleChange(e);
+                        this.onTextAreaChange(e)
+                    }}/>
                     {
                         (this.state.fields.length > 0)
                             ? <div className={"form-input"}>
@@ -182,13 +195,18 @@ export default class ManagerSignatureForm extends React.Component {
                                         let fieldName = this.camelize(field);
                                         return <div key={field}>
                                             <label htmlFor={fieldName} className={"form-label"}>{field}</label>
-                                            <Field name={fieldName} type={"text"} validate={this.validateField}
-                                                   className={"form-control"} onChange={(e) => {props.handleChange(e); this.onInputChange(e)}}/>
-                                            <ErrorMessage name={fieldName} component={"div"} className={"error-message"}/>
+                                            <ErrorMessage name={fieldName} component={"span"} className={"error-message"}/>
+                                            <Field id={fieldName} name={fieldName} type={"text"} validate={this.validateField}
+                                                   className={"form-control"} onChange={(e) => {
+                                                props.handleChange(e);
+                                                this.onInputChange(e);
+                                            }}/>
                                         </div>
                                     }
                                 )}
-                                <button type={"submit"} className="btn btn-success">Save signature</button>
+                                <button type={"submit"} className={"btn btn-success"} onClick={this.checkInvalidStyle}>Save
+                                    signature
+                                </button>
                             </div>
                             : <div/>
                     }

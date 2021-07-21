@@ -8,14 +8,15 @@ export default class SignaturePreview extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.imageUrl !== this.props.imageUrl ||
+        if (prevProps.mailBody !== this.props.mailBody ||
+            prevProps.imageUrl !== this.props.imageUrl ||
             prevProps.name !== this.props.name ||
             prevProps.jobTitle !== this.props.jobTitle ||
             prevProps.siteHost !== this.props.siteHost ||
             prevProps.phone !== this.props.phone ||
             prevProps.phoneBookUrl !== this.props.phoneBookUrl
         ) {
-            const signatureHtml = this.parseHtml(this.props.template);
+            const signatureHtml = this.parseHtml(this.props.mailBody + this.props.template);
             this.props.onSignatureChange(signatureHtml);
         }
     }
@@ -63,7 +64,6 @@ export default class SignaturePreview extends React.Component {
             }
         }
 
-/*        this.props.onSignatureChange(parsedHtml);*/
         return parsedHtml;
     }
 
@@ -73,8 +73,13 @@ export default class SignaturePreview extends React.Component {
 
     render() {
         return <div className={"preview"}>
-            <div className={"new_signature"}>
+            <div className={"new-signature"}>
                 <h1>Editable</h1>
+                {
+                    (this.props.mailBody)
+                    ? <Interweave content={this.props.mailBody}/>
+                    : <div/>
+                }
                 {
                     (this.props.template)
                         ? <div>
@@ -86,7 +91,7 @@ export default class SignaturePreview extends React.Component {
                         </div>
                 }
             </div>
-            <div className={"old_signature"}>
+            <div className={"old-signature"}>
                 <h1>Current</h1>
                 {
                     (this.props.signature)

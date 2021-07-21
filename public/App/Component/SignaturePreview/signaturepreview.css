@@ -4,14 +4,18 @@
     min-width: 322px;
 }
 
-.old_signature div {
+.old-signature div {
     display: grid;
 }
 
-.new_signature div {
+.new-signature div {
     display: grid;
 }
 
 span {
     margin-bottom: 5px;
+}
+
+.mail-body {
+    margin-bottom: 8px;
 }

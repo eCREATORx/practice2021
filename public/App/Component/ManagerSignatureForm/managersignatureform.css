@@ -11,6 +11,10 @@
     margin-top: 10px;
 }
 
+.form-input div {
+    margin-top: 8px;
+}
+
 .signature-select {
     margin-top: 20px;
 }
@@ -19,8 +23,10 @@
     margin-top: .25rem;
     font-size: .875em;
     color: #dc3545;
+    float: right;
 }
 
 .form-select-input textarea {
     margin-top: 20px;
+    resize: none;
 }

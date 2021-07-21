@@ -27,7 +27,13 @@ class UserBoxSignatureRepository extends ServiceEntityRepository
 
     public function setSignature(int $boxId, string $signature)
     {
-        $box = $this->findOneBy(['boxId' => $boxId]);
-        $box->setSignature($signature);
+        $this->createQueryBuilder('ubs')
+            ->update()
+            ->set('ubs.signature', ':signature')
+            ->where('ubs.boxId = :boxId')
+            ->setParameter('signature', $signature)
+            ->setParameter('boxId', $boxId)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -9,6 +9,7 @@ export default class App extends React.Component {
         super(props);
 
         this.state = {
+            mailBody: "",
             previousSignature: "",
             template: "",
             imageUrl: "",
@@ -45,6 +46,12 @@ export default class App extends React.Component {
         })
     }
 
+    setMailBodyValue = (value) => {
+        this.setState({
+            mailBody: value
+        })
+    }
+
     setNewSignature = (signature) => {
         this.setState({
             newSignature: signature
@@ -59,10 +66,12 @@ export default class App extends React.Component {
                   onBoxChange={this.setPreviousSignature}
                   onTemplateChange={this.setTemplate}
                   onInputChange={this.setTemplateFieldValue}
+                  onTextAreaChange={this.setMailBodyValue}
                   newSignature={this.state.newSignature}
               />
           </div>
           <SignaturePreview
+              mailBody={this.state.mailBody}
               signature={this.state.previousSignature}
               template={this.state.template}
               imageUrl={this.state.imageUrl}
