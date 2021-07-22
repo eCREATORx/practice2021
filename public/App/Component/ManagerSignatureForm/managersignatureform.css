@@ -1,5 +1,6 @@
-.form-select-input {
+.form {
     margin-left: 50px;
+    display: flex;
 }
 
 .box-select,
@@ -8,7 +9,7 @@
 }
 
 .form-input button {
-    margin-top: 10px;
+    margin-top: 16px;
 }
 
 .form-input div {
@@ -26,7 +27,11 @@
     float: right;
 }
 
-.form-select-input textarea {
+.form textarea {
     margin-top: 20px;
     resize: none;
+}
+
+.select-textarea {
+    margin-left: 50px;
 }

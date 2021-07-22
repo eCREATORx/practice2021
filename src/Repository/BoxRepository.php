@@ -25,8 +25,8 @@ class BoxRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('b')
             ->select('b.id, b.address')
-            ->innerJoin(UserBoxSignature::class, 'ub', Join::WITH, 'ub.boxId = b.id')
-            ->where('ub.userId = :userId')
+            ->innerJoin(UserBoxSignature::class, 'ubs', Join::WITH, 'ubs.boxId = b.id')
+            ->where('ubs.userId = :userId')
             ->setParameter(':userId', $userId)
             ->getQuery()
             ->getArrayResult();

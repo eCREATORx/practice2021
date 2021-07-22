@@ -18,6 +18,10 @@ get_template_structure:
     path: /get_template_structure
     controller: App\Controller\PageInfoController::getTemplateStructure
 
-set_signature:
-    path: /set_signature
-    controller: App\Controller\PageInfoController::setSignature
+save_signature:
+    path: /save_signature
+    controller: App\Controller\SignatureController::saveSignature
+
+upload_image:
+    path: /upload_image
+    controller: App\Controller\ImageUploaderController::uploadImage

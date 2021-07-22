@@ -1,37 +1,51 @@
 import * as React from "react";
 import "./imageloader.css";
+import "bootstrap/dist/css/bootstrap.css"
 
 export default class ImageLoader extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            imageUrl: 'https://w7.pngwing.com/pngs/891/105/png-transparent-computer-icons-user-others-miscellaneous-face-service.png'
+        }
+
         this.input_image = React.createRef();
-        this.signature_image = React.createRef();
     }
 
-    validateImage(files) {
-        const image = files[0] ?? null;
-        if (!image)
-        {
+    handleFileChange(files) {
+        const file = files[0] ?? null;
+        if (!this.validateFile(file)) {
             return;
         }
 
-        const imageName = image.name;
-        const imageSize = image.size;
+        const fakeFileUrl = URL.createObjectURL(file);
+        const realFileUrl = "Data/" + file.name;
 
-        const lastDot = imageName.lastIndexOf('.');
-        const extension = imageName.substring(lastDot + 1);
+        this.setState({
+            imageUrl: fakeFileUrl
+        });
 
-        if (extension === "png" && imageSize <= 5000000)
+        this.props.onImageChange(fakeFileUrl, realFileUrl);
+    }
+
+    validateFile = file => {
+        if (!file)
         {
-            this.signature_image.current.src = "Data/" + imageName;
-            this.props.onImageChange(this.signature_image.current.src);
+            return false;
         }
-        else
+
+        const imageSize = file.size;
+        const imageType = file.type;
+
+        if (imageType === "image/png" && imageSize <= 5000000)
         {
-            window.alert("Please change image (png, less than 5Mb)");
-            this.input_image.current.value = "";
+            return true;
         }
+
+        window.alert("Please change image (png, less than 5Mb)");
+        this.input_image.current.value = "";
+        return false;
     }
 
     handleClick = () => {
@@ -40,9 +54,9 @@ export default class ImageLoader extends React.Component {
 
     render() {
         return <div className={"image-loader"}>
-            <img ref={this.signature_image} className={"signature-image"} src={"https://w7.pngwing.com/pngs/891/105/png-transparent-computer-icons-user-others-miscellaneous-face-service.png"} alt={""}/>
-            <button className={"btn btn-success"} onClick={this.handleClick}>Upload image</button>
-            <input ref={this.input_image} type={"file"} style={{display: 'none'}} onChange={ event => { this.validateImage(event.target.files) } } />
+            <img className={"signature-image"} src={this.state.imageUrl} alt={""}/>
+            <button type={"button"} className={"btn btn-success"} onClick={this.handleClick}>Upload image</button>
+            <input ref={this.input_image} type={"file"} name={"image"} className={"d-none"} onChange={ event => { this.handleFileChange(event.target.files) } } />
         </div>
     }
 }

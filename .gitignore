@@ -14,3 +14,4 @@ yarn-error.log
 /public/compiled
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/dataSources.xml
+/public/Data/

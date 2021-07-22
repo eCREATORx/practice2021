@@ -1,5 +1,4 @@
 import * as React from "react";
-import ImageLoader from "./Component/ImageLoader/ImageLoader";
 import ManagerSignatureForm from "./Component/ManagerSignatureForm/ManagerSignatureForm";
 import SignaturePreview from "./Component/SignaturePreview/SignaturePreview";
 import "./app.css";
@@ -12,8 +11,9 @@ export default class App extends React.Component {
             mailBody: "",
             previousSignature: "",
             template: "",
-            imageUrl: "",
-            name:  "Your name",
+            fakeImageUrl: "",
+            realImageUrl: "",
+            name: "Your name",
             jobTitle: "Your job title",
             siteHost: "Your site host",
             phone: "Your phone",
@@ -36,13 +36,14 @@ export default class App extends React.Component {
 
     setTemplateFieldValue = (field, value) => {
         this.setState({
-            [field] : value
+            [field]: value
         })
     }
 
-    setImageUrl = (url) => {
+    handleFileChange = (fakeFileUrl, realFileUrl) => {
         this.setState({
-            imageUrl: url
+            fakeImageUrl: fakeFileUrl,
+            realImageUrl: realFileUrl
         })
     }
 
@@ -59,29 +60,28 @@ export default class App extends React.Component {
     }
 
     render() {
-      return <div className={"app"}>
-          <div className={"form"}>
-              <ImageLoader onImageChange={this.setImageUrl}/>
-              <ManagerSignatureForm
-                  onBoxChange={this.setPreviousSignature}
-                  onTemplateChange={this.setTemplate}
-                  onInputChange={this.setTemplateFieldValue}
-                  onTextAreaChange={this.setMailBodyValue}
-                  newSignature={this.state.newSignature}
-              />
-          </div>
-          <SignaturePreview
-              mailBody={this.state.mailBody}
-              signature={this.state.previousSignature}
-              template={this.state.template}
-              imageUrl={this.state.imageUrl}
-              name={this.state.name}
-              jobTitle={this.state.jobTitle}
-              siteHost={this.state.siteHost}
-              phone={this.state.phone}
-              phoneBookUrl={this.state.phoneBookUrl}
-              onSignatureChange={this.setNewSignature}
-          />
-      </div>
+        return <div className={"app"}>
+            <ManagerSignatureForm
+                onImageChange={this.handleFileChange}
+                onBoxChange={this.setPreviousSignature}
+                onTemplateChange={this.setTemplate}
+                onInputChange={this.setTemplateFieldValue}
+                onTextAreaChange={this.setMailBodyValue}
+                newSignature={this.state.newSignature}
+            />
+            <SignaturePreview
+                mailBody={this.state.mailBody}
+                signature={this.state.previousSignature}
+                template={this.state.template}
+                fakeImageUrl={this.state.fakeImageUrl}
+                realImageUrl={this.state.realImageUrl}
+                name={this.state.name}
+                jobTitle={this.state.jobTitle}
+                siteHost={this.state.siteHost}
+                phone={this.state.phone}
+                phoneBookUrl={this.state.phoneBookUrl}
+                onSignatureChange={this.setNewSignature}
+            />
+        </div>
     }
 }

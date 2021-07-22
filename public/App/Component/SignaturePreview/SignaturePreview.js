@@ -31,7 +31,7 @@ export default class SignaturePreview extends React.Component {
             const param = html.substring(indexStart, indexEnd + 1);
 
             if (param === "{this.props.imageUrl}") {
-                parsedHtml += this.props.imageUrl;
+                parsedHtml += this.props.fakeImageUrl;
             }
             else if (param === "{this.props.name}") {
                 parsedHtml += this.props.name;
