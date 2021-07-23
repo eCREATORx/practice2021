@@ -7,7 +7,7 @@ export default class ImageLoader extends React.Component {
         super(props);
 
         this.state = {
-            imageUrl: 'https://w7.pngwing.com/pngs/891/105/png-transparent-computer-icons-user-others-miscellaneous-face-service.png'
+            imageUrl: 'default_image.jpg'
         }
 
         this.input_image = React.createRef();

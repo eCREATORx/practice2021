@@ -16,6 +16,8 @@ let initialValues = {
     phoneBookUrl: ''
 };
 
+let formState = {};
+
 export default class ManagerSignatureForm extends React.Component {
     constructor(props) {
         super(props);
@@ -32,6 +34,7 @@ export default class ManagerSignatureForm extends React.Component {
         this.getUserBoxes();
         this.getTemplates();
 
+        this.form = React.createRef();
         this.reset_button = React.createRef();
         this.box_select = React.createRef();
     }
@@ -48,6 +51,9 @@ export default class ManagerSignatureForm extends React.Component {
             this.setState({
                 boxes: response.data
             })
+            response.data.map(box => {
+                formState[box.id] = {}
+            });
         } catch (error) {
             console.log(error);
         }
@@ -111,38 +117,40 @@ export default class ManagerSignatureForm extends React.Component {
         }
     }
 
-    onBoxChange = async selected => {
-        this.props.onBoxChange(await this.getSignature(selected.value));
+    onBoxChange = async (event) => {
+        this.reset_button.current.click();
+
+        this.props.onBoxChange(await this.getSignature(event.value));
         this.setState({
-            boxId: selected.value
-        })
+            boxId: event.value
+        });
     }
 
     onSignatureTemplateChange = async selected => {
         this.reset_button.current.click();
 
-        const template = await this.getTemplateStructure(selected.value)
+        const template = await this.getTemplateStructure(selected.value);
         this.setState({
             fields: template.scheme
-        })
-        this.props.onTemplateChange(template.content)
+        });
+        this.props.onTemplateChange(template.content);
     }
 
     onInputChange(event) {
         event.target.value ? event.target.classList.remove('is-invalid') : event.target.classList.add('is-invalid');
         this.props.onInputChange(event.target.name, event.target.value);
+        formState[this.state.boxId][event.target.name] = event.target.value;
     }
 
     onSubmit = async () => {
         if (this.state.boxId) {
             const signatureWithRealFileUrl = this.props.newSignature.split(this.state.fakeFileUrl).join(this.state.realFileUrl);
             await this.saveSignature(this.state.boxId, signatureWithRealFileUrl);
-            this.props.onBoxChange(await this.getSignature(this.state.boxId));
-
             await fetch('/upload_image', {
                 method: 'POST',
-                body: new FormData(document.getElementById("formElem"))
+                body: new FormData(this.form.current)
             });
+            this.props.onBoxChange(await this.getSignature(this.state.boxId));
         }
     }
 
@@ -191,26 +199,34 @@ export default class ManagerSignatureForm extends React.Component {
             onSubmit={this.onSubmit}
         >
             {props => (
-                <Form id={"formElem"} className={"form"}>
-                    <ImageLoader onImageChange={this.handleFileChange}/>
-                    <div className={"select-textarea"}>
-                        <Select
-                            placeholder={"Box"}
-                            ref={this.box_select}
-                            options={this.state.boxes.map(box => ({label: box.address, value: box.id}))}
-                            onChange={this.onBoxChange}
-                            className={"box-select"}
-                        />
-                        <Select
-                            placeholder={"Signature"}
-                            options={this.state.templates.map(template => ({label: template.name, value: template.id}))}
-                            onChange={this.onSignatureTemplateChange}
-                            className={"signature-select"}
-                        />
-                        <textarea name={"textArea"} className={"form-control"} onChange={(e) => {
-                            props.handleChange(e);
-                            this.onTextAreaChange(e)
-                        }}/>
+                <Form ref={this.form} className={"form"}>
+                    <div className={"form-top"}>
+                        <ImageLoader onImageChange={this.handleFileChange}/>
+                        <div className={"select-textarea"}>
+                            <Select
+                                placeholder={"Box"}
+                                ref={this.box_select}
+                                options={this.state.boxes.map(box => ({label: box.address, value: box.id}))}
+                                onChange={(e) => {
+                                    this.onBoxChange(e);
+                                    for (let field in formState[e.value])
+                                    {
+                                        props.setFieldValue(field, formState[e.value][field]);
+                                    }
+                                } }
+                                className={"box-select"}
+                            />
+                            <Select
+                                placeholder={"Signature"}
+                                options={this.state.templates.map(template => ({label: template.name, value: template.id}))}
+                                onChange={this.onSignatureTemplateChange}
+                                className={"signature-select"}
+                            />
+                            <textarea name={"textArea"} className={"form-control"} onChange={(e) => {
+                                props.handleChange(e);
+                                this.onTextAreaChange(e);
+                            }}/>
+                        </div>
                     </div>
                     {
                         (this.state.fields.length > 0)
@@ -220,11 +236,17 @@ export default class ManagerSignatureForm extends React.Component {
                                         return <div key={field}>
                                             <label htmlFor={fieldName} className={"form-label"}>{field}</label>
                                             <ErrorMessage name={fieldName} component={"span"} className={"error-message"}/>
-                                            <Field id={fieldName} name={fieldName} type={"text"} validate={this.validateField}
-                                                   className={"form-control"} onChange={(e) => {
-                                                props.handleChange(e);
-                                                this.onInputChange(e);
-                                            }}/>
+                                            <Field
+                                                id={fieldName}
+                                                name={fieldName}
+                                                type={"text"}
+                                                validate={this.validateField}
+                                                className={"form-control"}
+                                                onChange={ e => {
+                                                    props.handleChange(e);
+                                                    this.onInputChange(e);
+                                                }}
+                                            />
                                         </div>
                                     }
                                 )}

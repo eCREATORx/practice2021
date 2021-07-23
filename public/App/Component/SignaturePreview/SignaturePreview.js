@@ -9,7 +9,7 @@ export default class SignaturePreview extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.mailBody !== this.props.mailBody ||
-            prevProps.imageUrl !== this.props.imageUrl ||
+            prevProps.realImageUrl !== this.props.realImageUrl ||
             prevProps.name !== this.props.name ||
             prevProps.jobTitle !== this.props.jobTitle ||
             prevProps.siteHost !== this.props.siteHost ||
