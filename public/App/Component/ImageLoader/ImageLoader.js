@@ -56,7 +56,13 @@ export default class ImageLoader extends React.Component {
         return <div className={"image-loader"}>
             <img className={"signature-image"} src={this.state.imageUrl} alt={""}/>
             <button type={"button"} className={"btn btn-success"} onClick={this.handleClick}>Upload image</button>
-            <input ref={this.input_image} type={"file"} name={"image"} className={"d-none"} onChange={ event => { this.handleFileChange(event.target.files) } } />
+            <input
+                ref={this.input_image}
+                type={"file"}
+                name={"image"}
+                className={"d-none"}
+                onChange={event => this.handleFileChange(event.target.files)}
+            />
         </div>
     }
 }

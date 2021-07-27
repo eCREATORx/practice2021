@@ -7,13 +7,24 @@ import {sendGetRequest, sendPostRequest} from "../../Util/RequestUtil";
 import {RequestUrl} from "../../Model/RequestUrl";
 import ImageLoader from "../ImageLoader/ImageLoader";
 
-let initialValues = {
+const initialValues = {
     name: '',
     jobTitle: '',
-    siteHost: '',
     phone: '',
     phoneBookUrl: ''
 };
+
+const siteHostOptions = [
+    {value: "www.ispringsolutions.com", label: "www.ispringsolutions.com"},
+    {value: "www.ispring.fr", label: "www.ispring.fr"},
+    {value: "www.ispringlearn.de", label: "www.ispringlearn.de"},
+    {value: "www.ispring.es", label: "www.ispring.es"},
+    {value: "www.ispring.it", label: "www.ispring.it"},
+    {value: "www.ispring.nl", label: "www.ispring.nl"},
+    {value: "www.ispringpro.com.br", label: "www.ispringpro.com.br"},
+    {value: "www.ispring.pl", label: "www.ispring.pl"},
+    {value: "www.ispring.cn", label: "www.ispring.cn"}
+];
 
 let formState = {};
 
@@ -126,15 +137,23 @@ export default class ManagerSignatureForm extends React.Component {
 
     onSignatureTemplateChange = async selected => {
         this.reset_button.current.click();
-        if (this.state.fields.length > 0) {
-            // reset site_host_select
-        }
+        formState[this.state.boxId] = {};
 
         const template = await this.getTemplateStructure(selected.value);
         this.setState({
             fields: template.scheme
         });
         this.props.onTemplateChange(template.content);
+    }
+
+    onSiteHostChange = selected => {
+        this.props.onFormChange("siteHost", selected.value);
+        if (this.state.boxId) {
+            formState[this.state.boxId]["siteHost"] = selected.value;
+        }
+        this.setState({
+            siteHost: selected.value
+        });
     }
 
     onInputChange(event) {
@@ -146,11 +165,13 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     onSubmit = async () => {
-        if (this.state.boxId) {
+        if (this.state.boxId && this.state.siteHost) {
             const signatureWithRealFileUrl = this.props.newSignature.split(this.state.fakeFileUrl).join(this.state.realFileUrl);
             await this.saveSignature(this.state.boxId, signatureWithRealFileUrl);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
+        } else {
+            window.alert("Please select box and site host");
         }
     }
 
@@ -209,7 +230,7 @@ export default class ManagerSignatureForm extends React.Component {
                                 onChange={selected => {
                                     this.onBoxChange(selected);
                                     const fields = Object.keys(formState[selected.value]);
-                                    for (const field of fields){
+                                    for (const field of fields) {
                                         props.setFieldValue(field, formState[selected.value][field]);
                                     }
                                 }}
@@ -224,10 +245,14 @@ export default class ManagerSignatureForm extends React.Component {
                                 onChange={this.onSignatureTemplateChange}
                                 className={"signature-select"}
                             />
-                            <textarea name={"textArea"} className={"form-control"} onChange={e => {
-                                props.handleChange(e);
-                                this.onTextAreaChange(e);
-                            }}/>
+                            <textarea
+                                name={"textArea"}
+                                className={"form-control"}
+                                onChange={event => {
+                                    props.handleChange(event);
+                                    this.onTextAreaChange(event);
+                                }}
+                            />
                         </div>
                     </div>
                     {
@@ -235,38 +260,45 @@ export default class ManagerSignatureForm extends React.Component {
                             ? <div className={"form-input"}>
                                 {this.state.fields.map(field => {
                                         let fieldName = this.camelize(field);
-                                        return <div key={field}>
-                                            <label htmlFor={fieldName} className={"form-label"}>{field}</label>
-                                            <ErrorMessage name={fieldName} component={"span"} className={"error-message"}/>
-                                            <Field
-                                                id={fieldName}
-                                                name={fieldName}
-                                                type={"text"}
-                                                validate={this.validateField}
-                                                className={"form-control"}
-                                                onChange={e => {
-                                                    props.handleChange(e);
-                                                    this.onInputChange(e);
-                                                }}
-                                            />
-                                        </div>
+                                        if (fieldName !== "siteHost") {
+                                            return <div key={fieldName}>
+                                                <label htmlFor={fieldName} className={"form-label"}>{field}</label>
+                                                <ErrorMessage name={fieldName} component={"span"} className={"error-message"}/>
+                                                <Field
+                                                    id={fieldName}
+                                                    name={fieldName}
+                                                    type={"text"}
+                                                    validate={this.validateField}
+                                                    className={"form-control"}
+                                                    onChange={event => {
+                                                        props.handleChange(event);
+                                                        this.onInputChange(event);
+                                                    }}
+                                                />
+                                            </div>
+                                        } else {
+                                            return <div key={fieldName}>
+                                                <label className={"form-label"}>{field}</label>
+                                                <Select
+                                                    id={fieldName}
+                                                    value={this.state.boxId
+                                                        ? siteHostOptions.find(siteHost => siteHost.value === formState[this.state.boxId].siteHost) || null
+                                                        : null}
+                                                    placeholder={"Site host"}
+                                                    options={siteHostOptions}
+                                                    className={"site-host-select"}
+                                                    onChange={this.onSiteHostChange}
+                                                />
+                                            </div>
+                                        }
                                     }
                                 )}
-                                <div>
-                                    <label className={"form-label"}>Site host</label>
-                                    <Select
-/*                                        value={this.state.siteHost}*/
-                                        placeholder={"Site host"}
-                                        options={[{ value: 'www.ispringsolutions.com', label: 'www.ispringsolutions.com' }]}
-                                        className={"site-host-select"}
-                                        onChange={selected => {
-                                            this.props.onFormChange("siteHost", selected.label);
-/*                                            this.state.siteHost = selected.label;*/
-                                        }}
-                                    />
-                                </div>
-                                <button type={"submit"} className={"btn btn-success"} onClick={this.checkInvalidStyle}>Save
-                                    signature
+                                <button
+                                    type={"submit"}
+                                    className={"btn btn-success"}
+                                    onClick={this.checkInvalidStyle}
+                                >
+                                    Save signature
                                 </button>
                             </div>
                             : <div/>
