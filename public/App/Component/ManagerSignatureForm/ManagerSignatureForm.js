@@ -1,10 +1,9 @@
 import * as React from "react";
 import {Formik, Field, ErrorMessage, Form} from 'formik';
 import Select from 'react-select';
-import axios from "axios";
 import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {sendGetRequest} from "../../Util/RequestUtil";
+import {sendGetRequest, sendPostRequest} from "../../Util/RequestUtil";
 import {RequestUrl} from "../../Model/RequestUrl";
 import ImageLoader from "../ImageLoader/ImageLoader";
 
@@ -27,6 +26,7 @@ export default class ManagerSignatureForm extends React.Component {
             templates: [],
             fields: [],
             boxId: null,
+            siteHost: null,
             fakeFileUrl: "",
             realFileUrl: ""
         }
@@ -36,38 +36,39 @@ export default class ManagerSignatureForm extends React.Component {
 
         this.form = React.createRef();
         this.reset_button = React.createRef();
-        this.box_select = React.createRef();
     }
 
     async getUserBoxes() {
-        try {
-            const axiosRequestConfig = {
-                params: {
-                    'user_id': 1
-                }
-            };
+        let response, error;
+        [response, error] = await sendGetRequest(RequestUrl.getUserBoxes, {
+            'user_id': 1
+        });
 
-            const response = await axios.get('/get_user_boxes', axiosRequestConfig);
-            this.setState({
-                boxes: response.data
-            })
-            response.data.map(box => {
-                formState[box.id] = {}
-            });
-        } catch (error) {
+        if (error) {
             console.log(error);
+            return null;
         }
+
+        this.setState({
+            boxes: response.data
+        });
+        response.data.map(box => {
+            formState[box.id] = {}
+        });
     }
 
     async getTemplates() {
-        try {
-            const response = await axios.get('/get_templates');
-            this.setState({
-                templates: response.data
-            })
-        } catch (error) {
+        let response, error;
+        [response, error] = await sendGetRequest(RequestUrl.getTemplates);
+
+        if (error) {
             console.log(error);
+            return null;
         }
+
+        this.setState({
+            templates: response.data
+        });
     }
 
     async getSignature(index) {
@@ -92,7 +93,7 @@ export default class ManagerSignatureForm extends React.Component {
         let response, error;
         [response, error] = await sendGetRequest(RequestUrl.getTemplateStructure, {
             'template_id': index
-        })
+        });
 
         if (error) {
             console.log(error);
@@ -103,31 +104,31 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     async saveSignature(boxId, signature) {
-        try {
-            const axiosRequestConfig = {
-                params: {
-                    'user_id': 1,
-                    'box_id': boxId,
-                    'signature': signature
-                }
-            };
-            await axios.get('/save_signature', axiosRequestConfig);
-        } catch (error) {
+        let response, error;
+        [response, error] = await sendPostRequest(RequestUrl.saveSignature, signature, {
+            'user_id': 1,
+            'box_id': boxId
+        });
+
+        if (error) {
             console.log(error);
         }
     }
 
-    onBoxChange = async (event) => {
+    onBoxChange = async selected => {
         this.reset_button.current.click();
 
-        this.props.onBoxChange(await this.getSignature(event.value));
+        this.props.onBoxChange(await this.getSignature(selected.value));
         this.setState({
-            boxId: event.value
+            boxId: selected.value
         });
     }
 
     onSignatureTemplateChange = async selected => {
         this.reset_button.current.click();
+        if (this.state.fields.length > 0) {
+            // reset site_host_select
+        }
 
         const template = await this.getTemplateStructure(selected.value);
         this.setState({
@@ -138,18 +139,17 @@ export default class ManagerSignatureForm extends React.Component {
 
     onInputChange(event) {
         event.target.value ? event.target.classList.remove('is-invalid') : event.target.classList.add('is-invalid');
-        this.props.onInputChange(event.target.name, event.target.value);
-        formState[this.state.boxId][event.target.name] = event.target.value;
+        this.props.onFormChange(event.target.name, event.target.value);
+        if (this.state.boxId) {
+            formState[this.state.boxId][event.target.name] = event.target.value;
+        }
     }
 
     onSubmit = async () => {
         if (this.state.boxId) {
             const signatureWithRealFileUrl = this.props.newSignature.split(this.state.fakeFileUrl).join(this.state.realFileUrl);
             await this.saveSignature(this.state.boxId, signatureWithRealFileUrl);
-            await fetch('/upload_image', {
-                method: 'POST',
-                body: new FormData(this.form.current)
-            });
+            await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
         }
     }
@@ -205,24 +205,26 @@ export default class ManagerSignatureForm extends React.Component {
                         <div className={"select-textarea"}>
                             <Select
                                 placeholder={"Box"}
-                                ref={this.box_select}
                                 options={this.state.boxes.map(box => ({label: box.address, value: box.id}))}
-                                onChange={(e) => {
-                                    this.onBoxChange(e);
-                                    for (let field in formState[e.value])
-                                    {
-                                        props.setFieldValue(field, formState[e.value][field]);
+                                onChange={selected => {
+                                    this.onBoxChange(selected);
+                                    const fields = Object.keys(formState[selected.value]);
+                                    for (const field of fields){
+                                        props.setFieldValue(field, formState[selected.value][field]);
                                     }
-                                } }
+                                }}
                                 className={"box-select"}
                             />
                             <Select
                                 placeholder={"Signature"}
-                                options={this.state.templates.map(template => ({label: template.name, value: template.id}))}
+                                options={this.state.templates.map(template => ({
+                                    label: template.name,
+                                    value: template.id
+                                }))}
                                 onChange={this.onSignatureTemplateChange}
                                 className={"signature-select"}
                             />
-                            <textarea name={"textArea"} className={"form-control"} onChange={(e) => {
+                            <textarea name={"textArea"} className={"form-control"} onChange={e => {
                                 props.handleChange(e);
                                 this.onTextAreaChange(e);
                             }}/>
@@ -242,7 +244,7 @@ export default class ManagerSignatureForm extends React.Component {
                                                 type={"text"}
                                                 validate={this.validateField}
                                                 className={"form-control"}
-                                                onChange={ e => {
+                                                onChange={e => {
                                                     props.handleChange(e);
                                                     this.onInputChange(e);
                                                 }}
@@ -250,6 +252,19 @@ export default class ManagerSignatureForm extends React.Component {
                                         </div>
                                     }
                                 )}
+                                <div>
+                                    <label className={"form-label"}>Site host</label>
+                                    <Select
+/*                                        value={this.state.siteHost}*/
+                                        placeholder={"Site host"}
+                                        options={[{ value: 'www.ispringsolutions.com', label: 'www.ispringsolutions.com' }]}
+                                        className={"site-host-select"}
+                                        onChange={selected => {
+                                            this.props.onFormChange("siteHost", selected.label);
+/*                                            this.state.siteHost = selected.label;*/
+                                        }}
+                                    />
+                                </div>
                                 <button type={"submit"} className={"btn btn-success"} onClick={this.checkInvalidStyle}>Save
                                     signature
                                 </button>

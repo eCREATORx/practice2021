@@ -65,7 +65,7 @@ export default class App extends React.Component {
                 onImageChange={this.handleFileChange}
                 onBoxChange={this.setPreviousSignature}
                 onTemplateChange={this.setTemplate}
-                onInputChange={this.setTemplateFieldValue}
+                onFormChange={this.setTemplateFieldValue}
                 onTextAreaChange={this.setMailBodyValue}
                 newSignature={this.state.newSignature}
             />

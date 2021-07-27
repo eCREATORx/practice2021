@@ -16,18 +16,18 @@ class UserBoxSignatureService
         $this->entityManager = $registry->getManager('default');
     }
 
-    public function getSignature(int $boxId, $userId = 1): ?string
+    public function getSignature(int $boxId): ?string
     {
         /** @var UserBoxSignatureRepository $userBoxSignatureRepository */
         $userBoxSignatureRepository = $this->entityManager->getRepository(UserBoxSignature::class);
-        $signature = $userBoxSignatureRepository->getSignatureRecord($boxId, $userId);
+        $signature = $userBoxSignatureRepository->getSignatureRecord($boxId);
         return $signature ? $signature->getSignature() : null;
     }
 
-    public function saveSignature(int $boxId, string $signature, int $userId): void
+    public function saveSignature(int $userId, int $boxId, string $signature): void
     {
         $this->updateSignature($boxId, $signature);
-/*        $signatureRecord = $this->getSignature($boxId, $userId);
+        $signatureRecord = $this->getSignature($boxId);
         if ($signatureRecord)
         {
             $this->updateSignature($boxId, $signature);
@@ -35,7 +35,7 @@ class UserBoxSignatureService
         else
         {
             $this->createSignature($userId, $boxId, $signature);
-        }*/
+        }
     }
 
     private function updateSignature(int $boxId, string $signature): void
@@ -49,6 +49,6 @@ class UserBoxSignatureService
     {
         /** @var UserBoxSignatureRepository $userBoxSignatureRepository */
         $userBoxSignatureRepository = $this->entityManager->getRepository(UserBoxSignature::class);
-        $userBoxSignatureRepository->saveSignature($userId, $boxId, $signature);
+        $userBoxSignatureRepository->createSignature($userId, $boxId, $signature);
     }
 }

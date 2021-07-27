@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\UserBoxSignature;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,7 +21,7 @@ class UserBoxSignatureRepository extends ServiceEntityRepository
         parent::__construct($registry, UserBoxSignature::class);
     }
 
-    public function getSignatureRecord(int $boxId, int $userId): ?UserBoxSignature
+    public function getSignatureRecord(int $boxId): ?UserBoxSignature
     {
         $box = $this->findOneBy(['boxId' => $boxId]);
         return $box ?: null;
@@ -37,7 +39,11 @@ class UserBoxSignatureRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function saveSignature(int $userId, int $boxId, string $signature) {
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    public function createSignature(int $userId, int $boxId, string $signature) {
         $entityManager = $this->getEntityManager();
 
         $record = new UserBoxSignature();

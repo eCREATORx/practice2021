@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\BoxService;
+use App\Service\UserBoxService;
 use App\Service\UserBoxSignatureService;
 use App\Service\SignatureTemplateService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,13 +11,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class PageInfoController extends AbstractController
 {
-    private BoxService $boxService;
+    private UserBoxService $userBoxService;
     private UserBoxSignatureService $userBoxSignatureService;
     private SignatureTemplateService $signatureTemplateService;
 
-    public function __construct(BoxService $boxService, UserBoxSignatureService $userBoxSignatureService, SignatureTemplateService $signatureTemplateService)
+    public function __construct(UserBoxService $userBoxService, UserBoxSignatureService $userBoxSignatureService, SignatureTemplateService $signatureTemplateService)
     {
-        $this->boxService = $boxService;
+        $this->userBoxService = $userBoxService;
         $this->userBoxSignatureService = $userBoxSignatureService;
         $this->signatureTemplateService = $signatureTemplateService;
     }
@@ -25,7 +25,7 @@ class PageInfoController extends AbstractController
     public function getUserBoxes(Request $request): JsonResponse
     {
         $userId = $request->get('user_id');
-        return new JsonResponse($this->boxService->getUserBoxes($userId));
+        return new JsonResponse($this->userBoxService->getUserBoxes($userId));
     }
 
     public function getSignature(Request $request): JsonResponse
@@ -44,6 +44,5 @@ class PageInfoController extends AbstractController
         $templateId = $request->get('template_id');
         return new JsonResponse($this->signatureTemplateService->getTemplateStructure($templateId));
     }
-
 
 }

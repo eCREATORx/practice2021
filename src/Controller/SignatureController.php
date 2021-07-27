@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Service\UserBoxSignatureService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,11 +19,11 @@ class SignatureController extends AbstractController
 
     public function saveSignature(Request $request): JsonResponse
     {
-        $boxId = $request->get('box_id');
-        $signature = $request->get('signature');
         $userId = $request->get('user_id');
+        $boxId = $request->get('box_id');
+        $signature = $request->getContent();
 
-        $this->userBoxSignatureService->saveSignature($boxId, $signature, $userId);
+        $this->userBoxSignatureService->saveSignature($userId, $boxId, $signature);
         return new JsonResponse(true);
     }
 }

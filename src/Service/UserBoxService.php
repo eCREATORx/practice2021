@@ -1,13 +1,14 @@
 <?php
 
+
 namespace App\Service;
 
-use App\Entity\Box;
-use App\Repository\BoxRepository;
+use App\Entity\UserBox;
+use App\Repository\UserBoxRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 
-class BoxService
+class UserBoxService
 {
     private ObjectManager $entityManager;
 
@@ -18,8 +19,8 @@ class BoxService
 
     public function getUserBoxes(int $userId): array
     {
-        /** @var BoxRepository $boxRepository */
-        $boxRepository = $this->entityManager->getRepository(Box::class);
-        return $boxRepository->getUserBoxes($userId);
+        /** @var UserBoxRepository $userBoxRepository */
+        $userBoxRepository = $this->entityManager->getRepository(UserBox::class);
+        return $userBoxRepository->getUserBoxes($userId);
     }
 }
