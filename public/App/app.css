@@ -1,10 +1,5 @@
 .app {
     display: flex;
     width: max-content;
-    margin: auto;
-}
-
-.form {
-    margin-top: 10px;
-    margin-left: 10px;
+    margin: 30px auto 0;
 }

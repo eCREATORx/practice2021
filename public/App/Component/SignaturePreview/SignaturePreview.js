@@ -9,7 +9,7 @@ export default class SignaturePreview extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.mailBody !== this.props.mailBody ||
-            prevProps.realImageUrl !== this.props.realImageUrl ||
+            prevProps.fakeImageUrl !== this.props.fakeImageUrl ||
             prevProps.name !== this.props.name ||
             prevProps.jobTitle !== this.props.jobTitle ||
             prevProps.siteHost !== this.props.siteHost ||
@@ -77,14 +77,12 @@ export default class SignaturePreview extends React.Component {
                 <h1>Editable</h1>
                 {
                     (this.props.mailBody)
-                    ? <Interweave content={this.props.mailBody}/>
+                    ? <Interweave content={this.props.mailBody} noWrap={true}/>
                     : <div/>
                 }
                 {
                     (this.props.template)
-                        ? <div>
-                            <Interweave content={this.parseHtml(this.props.template)}/>
-                        </div>
+                        ? <Interweave content={this.parseHtml(this.props.template)} tagName={"div"}/>
                         : <div>
                             <span>Your name</span>
                             <span>Your jobTitle</span>
@@ -95,7 +93,7 @@ export default class SignaturePreview extends React.Component {
                 <h1>Current</h1>
                 {
                     (this.props.signature)
-                        ? <div><Interweave content={this.props.signature}/></div>
+                        ? <Interweave content={this.props.signature} tagName={"div"}/>
                         : <div>
                             <span>Your name</span>
                             <span>Your jobTitle</span>

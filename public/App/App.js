@@ -12,7 +12,6 @@ export default class App extends React.Component {
             previousSignature: "",
             template: "",
             fakeImageUrl: "",
-            realImageUrl: "",
             name: "Your name",
             jobTitle: "Your job title",
             siteHost: "Your site host",
@@ -22,13 +21,13 @@ export default class App extends React.Component {
         }
     }
 
-    setPreviousSignature = (signature) => {
+    setPreviousSignature = signature => {
         this.setState({
             previousSignature: signature
         })
     }
 
-    setTemplate = (template) => {
+    setTemplate = template => {
         this.setState({
             template: template
         })
@@ -40,20 +39,19 @@ export default class App extends React.Component {
         })
     }
 
-    handleFileChange = (fakeFileUrl, realFileUrl) => {
+    handleFileChange = fakeFileUrl => {
         this.setState({
-            fakeImageUrl: fakeFileUrl,
-            realImageUrl: realFileUrl
+            fakeImageUrl: fakeFileUrl
         })
     }
 
-    setMailBodyValue = (value) => {
+    setMailBodyValue = value => {
         this.setState({
             mailBody: value
         })
     }
 
-    setNewSignature = (signature) => {
+    setNewSignature = signature => {
         this.setState({
             newSignature: signature
         })
@@ -74,7 +72,6 @@ export default class App extends React.Component {
                 signature={this.state.previousSignature}
                 template={this.state.template}
                 fakeImageUrl={this.state.fakeImageUrl}
-                realImageUrl={this.state.realImageUrl}
                 name={this.state.name}
                 jobTitle={this.state.jobTitle}
                 siteHost={this.state.siteHost}

@@ -170,9 +170,21 @@ export default class ManagerSignatureForm extends React.Component {
             await this.saveSignature(this.state.boxId, signatureWithRealFileUrl);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
-        } else {
-            window.alert("Please select box and site host");
+            return true;
         }
+
+        let errorMessage = "";
+
+        if (!this.state.boxId)
+        {
+            errorMessage += "Please select a box\n";
+        }
+        if (!this.state.siteHost)
+        {
+            errorMessage += "Please select a site host";
+        }
+
+        window.alert(errorMessage);
     }
 
     onTextAreaChange(event) {
@@ -210,7 +222,7 @@ export default class ManagerSignatureForm extends React.Component {
             fakeFileUrl: fakeFileUrl,
             realFileUrl: realFileUrl
         })
-        this.props.onImageChange(fakeFileUrl, realFileUrl);
+        this.props.onImageChange(fakeFileUrl);
     }
 
     render() {
@@ -256,8 +268,8 @@ export default class ManagerSignatureForm extends React.Component {
                         </div>
                     </div>
                     {
-                        (this.state.fields.length > 0)
-                            ? <div className={"form-input"}>
+                        (this.state.fields.length > 0 && this.state.boxId)
+                            ? <div className={"form-bottom"}>
                                 {this.state.fields.map(field => {
                                         let fieldName = this.camelize(field);
                                         if (fieldName !== "siteHost") {
@@ -293,11 +305,7 @@ export default class ManagerSignatureForm extends React.Component {
                                         }
                                     }
                                 )}
-                                <button
-                                    type={"submit"}
-                                    className={"btn btn-success"}
-                                    onClick={this.checkInvalidStyle}
-                                >
+                                <button type={"submit"} className={"btn btn-success"} onClick={this.checkInvalidStyle}>
                                     Save signature
                                 </button>
                             </div>
