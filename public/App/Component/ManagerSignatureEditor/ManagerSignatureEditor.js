@@ -11,7 +11,7 @@ export default class ManagerSignatureEditor extends React.Component {
             mailBody: "",
             previousSignature: "",
             template: "",
-            fakeImageUrl: "",
+            fileUrlForPreview: "",
             name: "Your name",
             jobTitle: "Your job title",
             siteHost: "Your site host",
@@ -41,7 +41,7 @@ export default class ManagerSignatureEditor extends React.Component {
 
     handleFileChange = fakeFileUrl => {
         this.setState({
-            fakeImageUrl: fakeFileUrl
+            fileUrlForPreview: fakeFileUrl
         })
     }
 
@@ -71,7 +71,7 @@ export default class ManagerSignatureEditor extends React.Component {
                 mailBody={this.state.mailBody}
                 signature={this.state.previousSignature}
                 template={this.state.template}
-                fakeImageUrl={this.state.fakeImageUrl}
+                fileUrlForPreview={this.state.fileUrlForPreview}
                 name={this.state.name}
                 jobTitle={this.state.jobTitle}
                 siteHost={this.state.siteHost}

@@ -9,7 +9,7 @@ export default class SignaturePreview extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.mailBody !== this.props.mailBody ||
-            prevProps.fakeImageUrl !== this.props.fakeImageUrl ||
+            prevProps.fileUrlForPreview !== this.props.fileUrlForPreview ||
             prevProps.name !== this.props.name ||
             prevProps.jobTitle !== this.props.jobTitle ||
             prevProps.siteHost !== this.props.siteHost ||
@@ -31,7 +31,7 @@ export default class SignaturePreview extends React.Component {
             const param = html.substring(indexStart, indexEnd + 1);
 
             if (param === "{this.props.imageUrl}") {
-                parsedHtml += this.props.fakeImageUrl;
+                parsedHtml += this.props.fileUrlForPreview;
             }
             else if (param === "{this.props.name}") {
                 parsedHtml += this.props.name;
