@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\Entity\UserBoxSignature;
 use App\Repository\UserBoxSignatureRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 
@@ -16,21 +18,24 @@ class UserBoxSignatureService
         $this->entityManager = $registry->getManager('default');
     }
 
-    public function getSignature(int $boxId): ?string
+    public function getSignature(int $userId, int $boxId): ?string
     {
         /** @var UserBoxSignatureRepository $userBoxSignatureRepository */
         $userBoxSignatureRepository = $this->entityManager->getRepository(UserBoxSignature::class);
-        $signature = $userBoxSignatureRepository->getSignatureRecord($boxId);
+        $signature = $userBoxSignatureRepository->getSignatureRecord($userId, $boxId);
         return $signature ? $signature->getSignature() : null;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function saveSignature(int $userId, int $boxId, string $signature): void
     {
-        $this->updateSignature($boxId, $signature);
-        $signatureRecord = $this->getSignature($boxId);
+        $signatureRecord = $this->getSignature($userId, $boxId);
         if ($signatureRecord)
         {
-            $this->updateSignature($boxId, $signature);
+            $this->updateSignature($userId, $boxId, $signature);
         }
         else
         {
@@ -38,13 +43,17 @@ class UserBoxSignatureService
         }
     }
 
-    private function updateSignature(int $boxId, string $signature): void
+    private function updateSignature(int $userId, int $boxId, string $signature): void
     {
         /** @var UserBoxSignatureRepository $userBoxSignatureRepository */
         $userBoxSignatureRepository = $this->entityManager->getRepository(UserBoxSignature::class);
-        $userBoxSignatureRepository->updateSignature($boxId, $signature);
+        $userBoxSignatureRepository->updateSignature($userId, $boxId, $signature);
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function createSignature(int $userId, int $boxId, string $signature): void
     {
         /** @var UserBoxSignatureRepository $userBoxSignatureRepository */

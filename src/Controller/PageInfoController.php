@@ -30,8 +30,9 @@ class PageInfoController extends AbstractController
 
     public function getSignature(Request $request): JsonResponse
     {
+        $userId = $request->get('user_id');
         $boxId = $request->get('box_id');
-        return new JsonResponse($this->userBoxSignatureService->getSignature($boxId));
+        return new JsonResponse($this->userBoxSignatureService->getSignature($userId, $boxId));
     }
 
     public function getTemplates(): JsonResponse

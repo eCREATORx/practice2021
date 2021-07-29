@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Service\UserBoxSignatureService;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,10 @@ class SignatureController extends AbstractController
         $this->userBoxSignatureService = $userBoxSignatureService;
     }
 
-
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function saveSignature(Request $request): JsonResponse
     {
         $userId = $request->get('user_id');

@@ -21,19 +21,21 @@ class UserBoxSignatureRepository extends ServiceEntityRepository
         parent::__construct($registry, UserBoxSignature::class);
     }
 
-    public function getSignatureRecord(int $boxId): ?UserBoxSignature
+    public function getSignatureRecord(int $userId, int $boxId): ?UserBoxSignature
     {
-        $box = $this->findOneBy(['boxId' => $boxId]);
+        $box = $this->findOneBy(['userId' => $userId, 'boxId' => $boxId]);
         return $box ?: null;
     }
 
-    public function updateSignature(int $boxId, string $signature)
+    public function updateSignature(int $userId, int $boxId, string $signature): void
     {
         $this->createQueryBuilder('ubs')
             ->update()
             ->set('ubs.signature', ':signature')
-            ->where('ubs.boxId = :boxId')
+            ->where('ubs.userId = :userId')
+            ->andWhere('ubs.boxId = :boxId')
             ->setParameter('signature', $signature)
+            ->setParameter('userId', $userId)
             ->setParameter('boxId', $boxId)
             ->getQuery()
             ->execute();
@@ -43,7 +45,8 @@ class UserBoxSignatureRepository extends ServiceEntityRepository
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    public function createSignature(int $userId, int $boxId, string $signature) {
+    public function createSignature(int $userId, int $boxId, string $signature): void
+    {
         $entityManager = $this->getEntityManager();
 
         $record = new UserBoxSignature();

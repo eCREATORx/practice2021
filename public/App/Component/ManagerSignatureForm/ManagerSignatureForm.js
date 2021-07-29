@@ -76,6 +76,7 @@ export default class ManagerSignatureForm extends React.Component {
         let signature = "<div></div>";
         let response, error;
         [response, error] = await sendGetRequest(RequestUrl.getSignature, {
+            'user_id': 1,
             'box_id': index
         });
 
