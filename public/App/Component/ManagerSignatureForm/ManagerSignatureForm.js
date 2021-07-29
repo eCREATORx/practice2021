@@ -28,18 +28,18 @@ export default class ManagerSignatureForm extends React.Component {
             fields: [],
             boxId: null,
             siteHost: null,
-            fakeFileUrl: "",
-            realFileUrl: ""
+            fileUrlForPreview: "",
+            fileUrlForDb: ""
         }
 
-        this.getUserBoxes();
-        this.getTemplates();
+        this.setUserBoxes();
+        this.setTemplates();
 
         this.form = React.createRef();
-        this.reset_button = React.createRef();
+        this.resetButton = React.createRef();
     }
 
-    async getUserBoxes() {
+    async setUserBoxes() {
         let response, error;
         [response, error] = await sendGetRequest(RequestUrl.getUserBoxes, {
             'user_id': 1
@@ -58,7 +58,7 @@ export default class ManagerSignatureForm extends React.Component {
         });
     }
 
-    async getTemplates() {
+    async setTemplates() {
         let response, error;
         [response, error] = await sendGetRequest(RequestUrl.getTemplates);
 
@@ -117,7 +117,7 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     onBoxChange = async selected => {
-        this.reset_button.current.click();
+        this.resetButton.current.click();
 
         this.props.onBoxChange(await this.getSignature(selected.value));
         this.setState({
@@ -126,7 +126,7 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     onSignatureTemplateChange = async selected => {
-        this.reset_button.current.click();
+        this.resetButton.current.click();
         formState[this.state.boxId] = {};
 
         const template = await this.getTemplateStructure(selected.value);
@@ -156,8 +156,8 @@ export default class ManagerSignatureForm extends React.Component {
 
     onSubmit = async () => {
         if (this.state.boxId && this.state.siteHost) {
-            const signatureWithRealFileUrl = this.props.newSignature.split(this.state.fakeFileUrl).join(this.state.realFileUrl);
-            await this.saveSignature(this.state.boxId, signatureWithRealFileUrl);
+            const signatureWithFileUrlForDb = this.props.newSignature.split(this.state.fileUrlForPreview).join(this.state.fileUrlForDb);
+            await this.saveSignature(this.state.boxId, signatureWithFileUrlForDb);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
             return true;
@@ -200,12 +200,12 @@ export default class ManagerSignatureForm extends React.Component {
         return error;
     }
 
-    handleFileChange = (fakeFileUrl, realFileUrl) => {
+    handleFileChange = (fileUrlForPreview, fileUrlForDb) => {
         this.setState({
-            fakeFileUrl: fakeFileUrl,
-            realFileUrl: realFileUrl
+            fileUrlForPreview: fileUrlForPreview,
+            fileUrlForDb: fileUrlForDb
         })
-        this.props.onImageChange(fakeFileUrl);
+        this.props.onImageChange(fileUrlForPreview);
     }
 
     render() {
@@ -294,7 +294,7 @@ export default class ManagerSignatureForm extends React.Component {
                             </div>
                             : <div/>
                     }
-                    <button type={"reset"} ref={this.reset_button} style={{display: 'none'}}>Reset fields</button>
+                    <button type={"reset"} ref={this.resetButton} className={"d-none"}>Reset fields</button>
                 </Form>
             )}
         </Formik>
