@@ -7,7 +7,7 @@ export default class ImageLoader extends React.Component {
         super(props);
 
         this.state = {
-            imageUrl: 'default_image.jpg'
+            imageUrl: '/images/default_image.jpg'
         }
 
         this.input_image = React.createRef();
