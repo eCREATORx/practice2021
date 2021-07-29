@@ -73,6 +73,7 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     async getSignature(index) {
+        let signature = "<div></div>";
         let response, error;
         [response, error] = await sendGetRequest(RequestUrl.getSignature, {
             'box_id': index
@@ -83,11 +84,11 @@ export default class ManagerSignatureForm extends React.Component {
             return null;
         }
 
-        if (response.data.length > 0) {
-            return response.data;
-        } else {
-            return "<div></div>";
+        if (response.data.length) {
+            signature = response.data;
         }
+
+        return signature;
     }
 
     async getTemplateStructure(index) {
@@ -155,26 +156,18 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     onSubmit = async () => {
-        if (this.state.boxId && this.state.siteHost) {
+        if (this.state.siteHost)
+        {
             const signatureWithFileUrlForDb = this.props.newSignature.split(this.state.fileUrlForPreview).join(this.state.fileUrlForDb);
             await this.saveSignature(this.state.boxId, signatureWithFileUrlForDb);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
-            return true;
         }
-
-        let errorMessage = "";
-
-        if (!this.state.boxId)
+        else
         {
-            errorMessage += "Please select a box\n";
+            let errorMessage = "Please select a site host";
+            window.alert(errorMessage);
         }
-        if (!this.state.siteHost)
-        {
-            errorMessage += "Please select a site host";
-        }
-
-        window.alert(errorMessage);
     }
 
     onTextAreaChange(event) {
@@ -251,7 +244,7 @@ export default class ManagerSignatureForm extends React.Component {
                         </div>
                     </div>
                     {
-                        (this.state.fields.length > 0 && this.state.boxId)
+                        (this.state.fields.length && this.state.boxId)
                             ? <div className={"form-bottom"}>
                                 {this.state.fields.map(field => {
                                         let fieldName = camelize(field);
