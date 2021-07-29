@@ -10,7 +10,7 @@ export default class ImageLoader extends React.Component {
             imageUrl: '/images/default_image.jpg'
         }
 
-        this.input_image = React.createRef();
+        this.inputImage = React.createRef();
     }
 
     handleFileChange(files) {
@@ -37,30 +37,32 @@ export default class ImageLoader extends React.Component {
 
         const imageSize = file.size;
         const imageType = file.type;
+        const maxImageSize = 5000000;
+        const requiredImageType = "image/png";
 
-        if (imageType === "image/png" && imageSize <= 5000000)
+        if (imageType === requiredImageType && imageSize <= maxImageSize)
         {
             return true;
         }
 
         let errorMessage =  "";
 
-        if (imageType !== "image/png")
+        if (imageType !== requiredImageType)
         {
             errorMessage += "Please change image type (png expected, " + imageType.substring(6) + " given)\n";
         }
-        if (imageSize >= 5000000)
+        if (imageSize >= maxImageSize)
         {
             errorMessage += "Please change image size (less than 5Mb expected, " + imageSize/1000000 + "Mb given)";
         }
 
         window.alert(errorMessage);
-        this.input_image.current.value = "";
+        this.inputImage.current.value = "";
         return false;
     }
 
     handleClick = () => {
-        this.input_image.current.click();
+        this.inputImage.current.click();
     }
 
     render() {
@@ -68,7 +70,7 @@ export default class ImageLoader extends React.Component {
             <img className={"signature-image"} src={this.state.imageUrl} alt={""}/>
             <button type={"button"} className={"btn btn-success"} onClick={this.handleClick}>Upload image</button>
             <input
-                ref={this.input_image}
+                ref={this.inputImage}
                 type={"file"}
                 name={"image"}
                 className={"d-none"}
