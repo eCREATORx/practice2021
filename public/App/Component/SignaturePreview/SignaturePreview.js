@@ -83,10 +83,7 @@ export default class SignaturePreview extends React.Component {
                 {
                     (this.props.template)
                         ? <Interweave content={this.parseHtml(this.props.template)} tagName={"div"}/>
-                        : <div>
-                            <span>Your name</span>
-                            <span>Your jobTitle</span>
-                        </div>
+                        : <div/>
                 }
             </div>
             <div className={"old-signature"}>
@@ -94,10 +91,7 @@ export default class SignaturePreview extends React.Component {
                 {
                     (this.props.signature)
                         ? <Interweave content={this.props.signature} tagName={"div"}/>
-                        : <div>
-                            <span>Your name</span>
-                            <span>Your jobTitle</span>
-                        </div>
+                        : <div/>
                 }
             </div>
         </div>
