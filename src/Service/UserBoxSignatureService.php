@@ -32,32 +32,16 @@ class UserBoxSignatureService
      */
     public function saveSignature(int $userId, int $boxId, string $signature): void
     {
+        /** @var UserBoxSignatureRepository $userBoxSignatureRepository */
+        $userBoxSignatureRepository = $this->entityManager->getRepository(UserBoxSignature::class);
         $signatureRecord = $this->getSignature($userId, $boxId);
         if ($signatureRecord)
         {
-            $this->updateSignature($userId, $boxId, $signature);
+            $userBoxSignatureRepository->updateSignature($userId, $boxId, $signature);
         }
         else
         {
-            $this->createSignature($userId, $boxId, $signature);
+            $userBoxSignatureRepository->createSignature($userId, $boxId, $signature);
         }
-    }
-
-    private function updateSignature(int $userId, int $boxId, string $signature): void
-    {
-        /** @var UserBoxSignatureRepository $userBoxSignatureRepository */
-        $userBoxSignatureRepository = $this->entityManager->getRepository(UserBoxSignature::class);
-        $userBoxSignatureRepository->updateSignature($userId, $boxId, $signature);
-    }
-
-    /**
-     * @throws OptimisticLockException
-     * @throws ORMException
-     */
-    private function createSignature(int $userId, int $boxId, string $signature): void
-    {
-        /** @var UserBoxSignatureRepository $userBoxSignatureRepository */
-        $userBoxSignatureRepository = $this->entityManager->getRepository(UserBoxSignature::class);
-        $userBoxSignatureRepository->createSignature($userId, $boxId, $signature);
     }
 }
