@@ -152,7 +152,8 @@ export default class ManagerSignatureForm extends React.Component {
         });
     }
 
-    onInputChange(event) {
+    onInputChange(event, props) {
+        props.handleChange(event);
         event.target.value ? event.target.classList.remove('is-invalid') : event.target.classList.add('is-invalid');
         this.props.onFormChange(event.target.name, event.target.value);
         if (this.state.boxId) {
@@ -255,10 +256,7 @@ export default class ManagerSignatureForm extends React.Component {
                                                     type={"text"}
                                                     validate={this.validateField}
                                                     className={"form-control"}
-                                                    onChange={event => {
-                                                        props.handleChange(event);
-                                                        this.onInputChange(event);
-                                                    }}
+                                                    onChange={event => this.onInputChange(event, props)}
                                                 />
                                             </div>
                                         } else {
