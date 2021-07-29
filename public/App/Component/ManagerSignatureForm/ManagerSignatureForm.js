@@ -4,7 +4,9 @@ import Select from 'react-select';
 import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {sendGetRequest, sendPostRequest} from "../../Util/RequestUtil";
+import {camelize} from "../../Util/StringUtil";
 import {RequestUrl} from "../../Model/RequestUrl";
+import {SiteHosts} from "../../Model/SiteHosts";
 import ImageLoader from "../ImageLoader/ImageLoader";
 
 const initialValues = {
@@ -13,18 +15,6 @@ const initialValues = {
     phone: '',
     phoneBookUrl: ''
 };
-
-const siteHostOptions = [
-    {value: "www.ispringsolutions.com", label: "www.ispringsolutions.com"},
-    {value: "www.ispring.fr", label: "www.ispring.fr"},
-    {value: "www.ispringlearn.de", label: "www.ispringlearn.de"},
-    {value: "www.ispring.es", label: "www.ispring.es"},
-    {value: "www.ispring.it", label: "www.ispring.it"},
-    {value: "www.ispring.nl", label: "www.ispring.nl"},
-    {value: "www.ispringpro.com.br", label: "www.ispringpro.com.br"},
-    {value: "www.ispring.pl", label: "www.ispring.pl"},
-    {value: "www.ispring.cn", label: "www.ispring.cn"}
-];
 
 let formState = {};
 
@@ -193,7 +183,7 @@ export default class ManagerSignatureForm extends React.Component {
 
     checkInvalidStyle = () => {
         this.state.fields.map(field => {
-            let fieldName = this.camelize(field);
+            let fieldName = camelize(field);
             let curField = document.getElementById(fieldName);
             if (!curField.value) {
                 curField.classList.add("is-invalid");
@@ -208,13 +198,6 @@ export default class ManagerSignatureForm extends React.Component {
         }
 
         return error;
-    }
-
-    camelize(str) {
-        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
-            if (+match === 0) return "";
-            return index === 0 ? match.toLowerCase() : match.toUpperCase();
-        });
     }
 
     handleFileChange = (fakeFileUrl, realFileUrl) => {
@@ -271,7 +254,7 @@ export default class ManagerSignatureForm extends React.Component {
                         (this.state.fields.length > 0 && this.state.boxId)
                             ? <div className={"form-bottom"}>
                                 {this.state.fields.map(field => {
-                                        let fieldName = this.camelize(field);
+                                        let fieldName = camelize(field);
                                         if (fieldName !== "siteHost") {
                                             return <div key={fieldName}>
                                                 <label htmlFor={fieldName} className={"form-label"}>{field}</label>
@@ -294,10 +277,10 @@ export default class ManagerSignatureForm extends React.Component {
                                                 <Select
                                                     id={fieldName}
                                                     value={this.state.boxId
-                                                        ? siteHostOptions.find(siteHost => siteHost.value === formState[this.state.boxId].siteHost) || null
+                                                        ? SiteHosts.find(siteHost => siteHost.value === formState[this.state.boxId].siteHost) || null
                                                         : null}
                                                     placeholder={"Site host"}
-                                                    options={siteHostOptions}
+                                                    options={SiteHosts}
                                                     className={"site-host-select"}
                                                     onChange={this.onSiteHostChange}
                                                 />
