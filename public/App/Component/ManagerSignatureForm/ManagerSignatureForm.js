@@ -117,13 +117,18 @@ export default class ManagerSignatureForm extends React.Component {
         }
     }
 
-    onBoxChange = async selected => {
+    onBoxChange = async (selected, props) => {
         this.resetButton.current.click();
 
         this.props.onBoxChange(await this.getSignature(selected.value));
         this.setState({
             boxId: selected.value
         });
+
+        const fields = Object.keys(formState[selected.value]);
+        for (const field of fields) {
+            props.setFieldValue(field, formState[selected.value][field]);
+        }
     }
 
     onSignatureTemplateChange = async selected => {
@@ -170,7 +175,8 @@ export default class ManagerSignatureForm extends React.Component {
         }
     }
 
-    onTextAreaChange(event) {
+    onTextAreaChange(event, props) {
+        props.handleChange(event);
         this.props.onTextAreaChange('<div class="mail-body">' + event.target.value + '</div>');
     }
 
@@ -215,13 +221,7 @@ export default class ManagerSignatureForm extends React.Component {
                             <Select
                                 placeholder={"Box"}
                                 options={this.state.boxes.map(box => ({label: box.address, value: box.id}))}
-                                onChange={selected => {
-                                    this.onBoxChange(selected);
-                                    const fields = Object.keys(formState[selected.value]);
-                                    for (const field of fields) {
-                                        props.setFieldValue(field, formState[selected.value][field]);
-                                    }
-                                }}
+                                onChange={selected => this.onBoxChange(selected, props)}
                                 className={"box-select"}
                             />
                             <Select
@@ -236,10 +236,7 @@ export default class ManagerSignatureForm extends React.Component {
                             <textarea
                                 name={"textArea"}
                                 className={"form-control"}
-                                onChange={event => {
-                                    props.handleChange(event);
-                                    this.onTextAreaChange(event);
-                                }}
+                                onChange={event => this.onTextAreaChange(event, props)}
                             />
                         </div>
                     </div>
