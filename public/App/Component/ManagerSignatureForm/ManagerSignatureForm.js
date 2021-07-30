@@ -29,7 +29,8 @@ export default class ManagerSignatureForm extends React.Component {
             boxId: null,
             siteHost: null,
             fileUrlForPreview: "",
-            fileUrlForDb: ""
+            fileUrlForDb: "",
+            inputClass: ""
         }
 
         this.setUserBoxes();
@@ -182,16 +183,6 @@ export default class ManagerSignatureForm extends React.Component {
         this.props.onTextAreaChange('<div class="mail-body">' + event.target.value + '</div>');
     }
 
-    checkInvalidStyle = () => {
-        this.state.fields.map(field => {
-            let fieldName = camelize(field);
-            let curField = document.getElementById(fieldName);
-            if (!curField.value) {
-                curField.classList.add("is-invalid");
-            }
-        })
-    }
-
     validateField(value) {
         let error;
         if (!value) {
@@ -248,15 +239,18 @@ export default class ManagerSignatureForm extends React.Component {
                                 {this.state.fields.map(field => {
                                         let fieldName = camelize(field);
                                         if (fieldName !== "siteHost") {
+                                            (props.errors[fieldName] && props.touched[fieldName])
+                                                ? this.state.inputClass = "form-control is-invalid"
+                                                : this.state.inputClass = "form-control"
+
                                             return <div key={fieldName}>
                                                 <label htmlFor={fieldName} className={"form-label"}>{field}</label>
                                                 <ErrorMessage name={fieldName} component={"span"} className={"error-message"}/>
                                                 <Field
-                                                    id={fieldName}
                                                     name={fieldName}
                                                     type={"text"}
                                                     validate={this.validateField}
-                                                    className={"form-control"}
+                                                    className={this.state.inputClass}
                                                     onChange={event => this.onInputChange(event, props)}
                                                 />
                                             </div>
@@ -264,7 +258,6 @@ export default class ManagerSignatureForm extends React.Component {
                                             return <div key={fieldName}>
                                                 <label className={"form-label"}>{field}</label>
                                                 <Select
-                                                    id={fieldName}
                                                     value={this.state.boxId
                                                         ? SiteHosts.find(siteHost => siteHost.value === formState[this.state.boxId].siteHost) || null
                                                         : null}
@@ -277,9 +270,7 @@ export default class ManagerSignatureForm extends React.Component {
                                         }
                                     }
                                 )}
-                                <button type={"submit"} className={"btn btn-success"} onClick={this.checkInvalidStyle}>
-                                    Save signature
-                                </button>
+                                <button type={"submit"} className={"btn btn-success"}>Save signature</button>
                             </div>
                             : <div/>
                     }
