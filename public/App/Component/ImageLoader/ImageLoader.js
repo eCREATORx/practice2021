@@ -1,6 +1,8 @@
 import * as React from "react";
 import "./imageloader.css";
-import "bootstrap/dist/css/bootstrap.css"
+import "bootstrap/dist/css/bootstrap.css";
+// noinspection ES6CheckImport
+import {store} from 'react-notifications-component';
 
 export default class ImageLoader extends React.Component {
     constructor(props) {
@@ -15,24 +17,61 @@ export default class ImageLoader extends React.Component {
 
     handleFileChange(files) {
         const file = files[0] ?? null;
-        if (!this.validateFile(file)) {
-            return;
+        const errors = this.validateFile(file);
+
+        if (errors.length)
+        {
+            for (let i = 0; i < errors.length; i++)
+            {
+                store.addNotification({
+                    title: "Error",
+                    message: errors[i],
+                    type: "danger",
+                    insert: "top",
+                    container: "bottom-center",
+                    animationIn: ["animate__animated", "animate__fadeIn"],
+                    animationOut: ["animate__animated", "animate__fadeOut"],
+                    dismiss: {
+                        duration: 5000,
+                        onScreen: true
+                    }
+                });
+            }
         }
+        else
+        {
+            store.addNotification({
+                title: "Success",
+                message: "Image is good!",
+                type: "success",
+                insert: "top",
+                container: "bottom-center",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 5000,
+                    onScreen: true
+                }
+            });
 
-        const fileUrlForPreview = URL.createObjectURL(file);
-        const fileUrlForDb = "Data/" + file.name;
+            const fileUrlForPreview = URL.createObjectURL(file);
+            const fileUrlForDb = "Data/" + file.name;
 
-        this.setState({
-            imageUrl: fileUrlForPreview
-        });
+            this.setState({
+                imageUrl: fileUrlForPreview
+            });
 
-        this.props.onImageChange(fileUrlForPreview, fileUrlForDb);
+            this.props.onImageChange(fileUrlForPreview, fileUrlForDb);
+        }
     }
 
     validateFile = file => {
+        let errors =  [];
+
         if (!file)
         {
-            return false;
+            errors.push("Please select an image!");
+            return errors;
         }
 
         const imageSize = file.size;
@@ -42,23 +81,20 @@ export default class ImageLoader extends React.Component {
 
         if (imageType === requiredImageType && imageSize <= maxImageSize)
         {
-            return true;
+            return errors;
         }
-
-        let errorMessage =  "";
 
         if (imageType !== requiredImageType)
         {
-            errorMessage += "Please change image type (png expected, " + imageType.substring(6) + " given)\n";
+            errors.push("Please change image type (png expected, " + imageType.substring(6) + " given)");
         }
         if (imageSize >= maxImageSize)
         {
-            errorMessage += "Please change image size (less than 5Mb expected, " + imageSize/1000000 + "Mb given)";
+            errors.push("Please change image size (less than 5Mb expected, " + imageSize/1000000 + "Mb given)");
         }
 
-        window.alert(errorMessage);
         this.inputImage.current.value = "";
-        return false;
+        return errors;
     }
 
     handleClick = () => {

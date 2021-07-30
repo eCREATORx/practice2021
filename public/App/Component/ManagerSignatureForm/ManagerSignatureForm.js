@@ -8,6 +8,8 @@ import {camelize} from "../../Util/StringUtil";
 import {RequestUrl} from "../../Model/RequestUrl";
 import {SiteHosts} from "../../Model/SiteHosts";
 import ImageLoader from "../ImageLoader/ImageLoader";
+// noinspection ES6CheckImport
+import {store} from 'react-notifications-component';
 
 const initialValues = {
     name: '',
@@ -170,11 +172,36 @@ export default class ManagerSignatureForm extends React.Component {
             await this.saveSignature(this.state.boxId, signatureWithFileUrlForDb);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
+
+            store.addNotification({
+                title: "Success",
+                message: "Signature is saved!",
+                type: "success",
+                insert: "top",
+                container: "bottom-center",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 5000,
+                    onScreen: true
+                }
+            });
         }
         else
         {
-            let errorMessage = "Please select a site host";
-            window.alert(errorMessage);
+            store.addNotification({
+                title: "Error",
+                message: "Please select a site host",
+                type: "danger",
+                insert: "top",
+                container: "bottom-center",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 5000,
+                    onScreen: true
+                }
+            });
         }
     }
 
