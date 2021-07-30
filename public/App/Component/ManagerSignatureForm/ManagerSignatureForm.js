@@ -16,7 +16,7 @@ const initialValues = {
     phoneBookUrl: ''
 };
 
-let formState = {};
+let boxFormState = {};
 
 export default class ManagerSignatureForm extends React.Component {
     constructor(props) {
@@ -55,7 +55,7 @@ export default class ManagerSignatureForm extends React.Component {
             boxes: response.data
         });
         response.data.map(box => {
-            formState[box.id] = {}
+            boxFormState[box.id] = {}
         });
     }
 
@@ -127,15 +127,15 @@ export default class ManagerSignatureForm extends React.Component {
             boxId: selected.value
         });
 
-        const fields = Object.keys(formState[selected.value]);
+        const fields = Object.keys(boxFormState[selected.value]);
         for (const field of fields) {
-            props.setFieldValue(field, formState[selected.value][field]);
+            props.setFieldValue(field, boxFormState[selected.value][field]);
         }
     }
 
     onSignatureTemplateChange = async selected => {
         this.resetButton.current.click();
-        formState[this.state.boxId] = {};
+        boxFormState[this.state.boxId] = {};
 
         const template = await this.getTemplateStructure(selected.value);
         this.setState({
@@ -147,7 +147,7 @@ export default class ManagerSignatureForm extends React.Component {
     onSiteHostChange = selected => {
         this.props.onFormChange("siteHost", selected.value);
         if (this.state.boxId) {
-            formState[this.state.boxId]["siteHost"] = selected.value;
+            boxFormState[this.state.boxId]["siteHost"] = selected.value;
         }
         this.setState({
             siteHost: selected.value
@@ -159,7 +159,7 @@ export default class ManagerSignatureForm extends React.Component {
         event.target.value ? event.target.classList.remove('is-invalid') : event.target.classList.add('is-invalid');
         this.props.onFormChange(event.target.name, event.target.value);
         if (this.state.boxId) {
-            formState[this.state.boxId][event.target.name] = event.target.value;
+            boxFormState[this.state.boxId][event.target.name] = event.target.value;
         }
     }
 
@@ -259,7 +259,7 @@ export default class ManagerSignatureForm extends React.Component {
                                                 <label className={"form-label"}>{field}</label>
                                                 <Select
                                                     value={this.state.boxId
-                                                        ? SiteHosts.find(siteHost => siteHost.value === formState[this.state.boxId].siteHost) || null
+                                                        ? SiteHosts.find(siteHost => siteHost.value === boxFormState[this.state.boxId].siteHost) || null
                                                         : null}
                                                     placeholder={"Site host"}
                                                     options={SiteHosts}
