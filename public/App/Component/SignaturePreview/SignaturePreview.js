@@ -2,73 +2,70 @@ import * as React from "react";
 import Interweave from 'interweave';
 import "./signaturepreview.css";
 
+let changedVars = {};
+
 export default class SignaturePreview extends React.Component {
     constructor(props) {
         super(props);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.mailBody !== this.props.mailBody ||
-            prevProps.fileUrlForPreview !== this.props.fileUrlForPreview ||
-            prevProps.name !== this.props.name ||
-            prevProps.jobTitle !== this.props.jobTitle ||
-            prevProps.siteHost !== this.props.siteHost ||
-            prevProps.phone !== this.props.phone ||
-            prevProps.phoneBookUrl !== this.props.phoneBookUrl
-        ) {
-            const signatureHtml = this.parseHtml(this.props.mailBody + this.props.template);
-            this.props.onSignatureChange(signatureHtml);
+        if (prevProps.mailBody !== this.props.mailBody)
+        {
+            const newSignature = this.parseHtml(this.props.template);
+            this.props.onSignatureChange(this.props.mailBody + newSignature);
+        }
+        else
+        {
+            const templateFields = Object.keys(this.initTemplateVars(this.props.template));
+            for (const field of templateFields) {
+                if (prevProps[field] !== this.props[field]) {
+                    changedVars[field] = this.props[field];
+                    const newSignature = this.parseHtml(this.props.template);
+                    this.props.onSignatureChange(this.props.mailBody + newSignature);
+                }
+            }
         }
     }
 
-    parseHtml(html) {
-        let parsedHtml;
-        let indexStart = html.indexOf("{");
-        parsedHtml = html.substring(0, indexStart);
+    parseHtml(template) {
+        const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
+        const templateVarsMatchesArr = Array.from(templateVarsMatches);
+        const defaultVarsValues = this.initTemplateVars(template);
 
-        while (indexStart !== -1) {
-            const indexEnd = html.indexOf("}", indexStart);
-            const param = html.substring(indexStart, indexEnd + 1);
+        templateVarsMatchesArr.forEach( value => {
+            const fullText = value[0];
+            const textWithoutBrackets = value[1];
 
-            if (param === "{this.props.imageUrl}") {
-                parsedHtml += this.props.fileUrlForPreview;
-            }
-            else if (param === "{this.props.name}") {
-                parsedHtml += this.props.name;
-            }
-            else if (param === "{this.props.jobTitle}")
-            {
-                parsedHtml += this.props.jobTitle;
-            }
-            else if (param === "{this.props.siteHost}")
-            {
-                parsedHtml += this.props.siteHost;
-            }
-            else if (param === "{this.props.phone}")
-            {
-                parsedHtml += this.props.phone;
-            }
-            else if (param === "{this.props.phoneBookUrl}")
-            {
-                parsedHtml += this.props.phoneBookUrl;
-            }
+            template = template.replace(fullText, changedVars[textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
+        });
 
-            indexStart = html.indexOf("{", indexEnd);
-            if (indexStart !== -1)
+        return template;
+    }
+
+    initTemplateVars = template => {
+        const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
+        const templateVarsMatchesArr = Array.from(templateVarsMatches);
+
+        let templateVars = {};
+
+        templateVarsMatchesArr.forEach( value => {
+            const textWithoutBrackets = value[1];
+            if (textWithoutBrackets !== "imageUrl")
             {
-                parsedHtml += html.substring(indexEnd + 1, indexStart);
+                templateVars = Object.assign(templateVars, {
+                    [textWithoutBrackets]: 'Your ' + textWithoutBrackets
+                })
             }
             else
             {
-                parsedHtml += html.substring(indexEnd + 1);
+                templateVars = Object.assign(templateVars, {
+                    [textWithoutBrackets]: ""
+                })
             }
-        }
+        })
 
-        return parsedHtml;
-    }
-
-    minimizeHtml(html) {
-        return html.trim().replace(/\r?\n|\r|\s\s+/g, '');
+        return templateVars;
     }
 
     render() {

@@ -12,11 +12,11 @@ export default class ManagerSignatureEditor extends React.Component {
             previousSignature: "",
             template: "",
             fileUrlForPreview: "",
-            name: "Your name",
-            jobTitle: "Your job title",
-            siteHost: "Your site host",
-            phone: "Your phone",
-            phoneBookUrl: "Your phone book url",
+            name: "",
+            jobTitle: "",
+            siteHost: "",
+            phone: "",
+            phoneBookUrl: "",
             newSignature: ""
         }
     }
@@ -71,7 +71,7 @@ export default class ManagerSignatureEditor extends React.Component {
                 mailBody={this.state.mailBody}
                 signature={this.state.previousSignature}
                 template={this.state.template}
-                fileUrlForPreview={this.state.fileUrlForPreview}
+                imageUrl={this.state.fileUrlForPreview}
                 name={this.state.name}
                 jobTitle={this.state.jobTitle}
                 siteHost={this.state.siteHost}
