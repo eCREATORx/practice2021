@@ -3,6 +3,8 @@ import ManagerSignatureForm from "../ManagerSignatureForm/ManagerSignatureForm";
 import SignaturePreview from "../SignaturePreview/SignaturePreview";
 import "./managersignatureeditor.css";
 
+let changedVars = {};
+
 export default class ManagerSignatureEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -12,11 +14,7 @@ export default class ManagerSignatureEditor extends React.Component {
             previousSignature: "",
             template: "",
             fileUrlForPreview: "",
-            name: "",
-            jobTitle: "",
-            siteHost: "",
-            phone: "",
-            phoneBookUrl: "",
+            changedVars: changedVars,
             newSignature: ""
         }
     }
@@ -33,10 +31,11 @@ export default class ManagerSignatureEditor extends React.Component {
         })
     }
 
-    setTemplateFieldValue = (field, value) => {
+    setChangedVar = (field, value) => {
+        changedVars[field] = value;
         this.setState({
-            [field]: value
-        })
+            changedVars: changedVars
+        });
     }
 
     handleFileChange = fakeFileUrl => {
@@ -63,7 +62,7 @@ export default class ManagerSignatureEditor extends React.Component {
                 onImageChange={this.handleFileChange}
                 onBoxChange={this.setPreviousSignature}
                 onTemplateChange={this.setTemplate}
-                onFormChange={this.setTemplateFieldValue}
+                onFormChange={this.setChangedVar}
                 onTextAreaChange={this.setMailBodyValue}
                 newSignature={this.state.newSignature}
             />
@@ -72,11 +71,7 @@ export default class ManagerSignatureEditor extends React.Component {
                 signature={this.state.previousSignature}
                 template={this.state.template}
                 imageUrl={this.state.fileUrlForPreview}
-                name={this.state.name}
-                jobTitle={this.state.jobTitle}
-                siteHost={this.state.siteHost}
-                phone={this.state.phone}
-                phoneBookUrl={this.state.phoneBookUrl}
+                changedVars={this.state.changedVars}
                 onSignatureChange={this.setNewSignature}
             />
         </div>

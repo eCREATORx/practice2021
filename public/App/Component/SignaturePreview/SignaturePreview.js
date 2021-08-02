@@ -1,71 +1,33 @@
 import * as React from "react";
 import Interweave from 'interweave';
+import {initTemplateVars} from "../../Util/ParseUtil";
 import "./signaturepreview.css";
-
-let changedVars = {};
 
 export default class SignaturePreview extends React.Component {
     constructor(props) {
         super(props);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.mailBody !== this.props.mailBody)
-        {
-            const newSignature = this.parseHtml(this.props.template);
-            this.props.onSignatureChange(this.props.mailBody + newSignature);
-        }
-        else
-        {
-            const templateFields = Object.keys(this.initTemplateVars(this.props.template));
-            for (const field of templateFields) {
-                if (prevProps[field] !== this.props[field]) {
-                    changedVars[field] = this.props[field];
-                    const newSignature = this.parseHtml(this.props.template);
-                    this.props.onSignatureChange(this.props.mailBody + newSignature);
-                }
-            }
-        }
-    }
-
     parseHtml(template) {
         const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
         const templateVarsMatchesArr = Array.from(templateVarsMatches);
-        const defaultVarsValues = this.initTemplateVars(template);
+        const defaultVarsValues = initTemplateVars(template);
 
         templateVarsMatchesArr.forEach( value => {
             const fullText = value[0];
             const textWithoutBrackets = value[1];
 
-            template = template.replace(fullText, changedVars[textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
-        });
-
-        return template;
-    }
-
-    initTemplateVars = template => {
-        const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
-        const templateVarsMatchesArr = Array.from(templateVarsMatches);
-
-        let templateVars = {};
-
-        templateVarsMatchesArr.forEach( value => {
-            const textWithoutBrackets = value[1];
-            if (textWithoutBrackets !== "imageUrl")
+            if (textWithoutBrackets === "imageUrl" && this.props.imageUrl)
             {
-                templateVars = Object.assign(templateVars, {
-                    [textWithoutBrackets]: 'Your ' + textWithoutBrackets
-                })
+                template = template.replace(fullText, this.props.imageUrl)
             }
             else
             {
-                templateVars = Object.assign(templateVars, {
-                    [textWithoutBrackets]: ""
-                })
+                template = template.replace(fullText, this.props.changedVars[textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
             }
-        })
+        });
 
-        return templateVars;
+        return template;
     }
 
     render() {

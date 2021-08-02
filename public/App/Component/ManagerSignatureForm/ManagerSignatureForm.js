@@ -10,6 +10,7 @@ import {SiteHosts} from "../../Model/SiteHosts";
 import ImageLoader from "../ImageLoader/ImageLoader";
 // noinspection ES6CheckImport
 import {store} from 'react-notifications-component';
+import {initTemplateVars} from "../../Util/ParseUtil";
 
 let initialValues = {};
 let boxFormState = {};
@@ -24,6 +25,8 @@ export default class ManagerSignatureForm extends React.Component {
             fields: [],
             boxId: null,
             siteHost: null,
+            mailBody: "",
+            template: "",
             fileUrlForPreview: "",
             fileUrlForDb: "",
             inputClass: ""
@@ -50,7 +53,7 @@ export default class ManagerSignatureForm extends React.Component {
         this.setState({
             boxes: response.data
         });
-        response.data.map(box => {
+        response.data.forEach(box => {
             boxFormState[box.id] = {}
         });
     }
@@ -142,7 +145,8 @@ export default class ManagerSignatureForm extends React.Component {
 
         const template = await this.getTemplateStructure(selected.value);
         this.setState({
-            fields: template.scheme
+            fields: template.scheme,
+            template: template.content
         });
         this.props.onTemplateChange(template.content);
     }
@@ -166,11 +170,33 @@ export default class ManagerSignatureForm extends React.Component {
         }
     }
 
+    parseHtml(template) {
+        const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
+        const templateVarsMatchesArr = Array.from(templateVarsMatches);
+        const defaultVarsValues = initTemplateVars(template);
+
+        templateVarsMatchesArr.forEach( value => {
+            const fullText = value[0];
+            const textWithoutBrackets = value[1];
+
+            if (textWithoutBrackets === "imageUrl" && this.state.fileUrlForDb)
+            {
+                template = template.replace(fullText, this.state.fileUrlForDb)
+            }
+            else
+            {
+                template = template.replace(fullText, boxFormState[this.state.boxId][textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
+            }
+        });
+
+        return template;
+    }
+
     onSubmit = async () => {
         if (this.state.siteHost)
         {
-            const signatureWithFileUrlForDb = this.props.newSignature.split(this.state.fileUrlForPreview).join(this.state.fileUrlForDb);
-            await this.saveSignature(this.state.boxId, signatureWithFileUrlForDb);
+            const signature = this.state.mailBody + this.parseHtml(this.state.template);
+            await this.saveSignature(this.state.boxId, signature);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
 
@@ -208,7 +234,11 @@ export default class ManagerSignatureForm extends React.Component {
 
     onTextAreaChange(event, props) {
         props.handleChange(event);
-        this.props.onTextAreaChange('<div class="mail-body">' + event.target.value + '</div>');
+        const mailBody = '<div class="mail-body">' + event.target.value + '</div>';
+        this.props.onTextAreaChange(mailBody);
+        this.setState({
+            mailBody: mailBody
+        });
     }
 
     validateField(value) {
