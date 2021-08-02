@@ -11,13 +11,7 @@ import ImageLoader from "../ImageLoader/ImageLoader";
 // noinspection ES6CheckImport
 import {store} from 'react-notifications-component';
 
-const initialValues = {
-    name: '',
-    jobTitle: '',
-    phone: '',
-    phoneBookUrl: ''
-};
-
+let initialValues = {};
 let boxFormState = {};
 
 export default class ManagerSignatureForm extends React.Component {
@@ -73,6 +67,13 @@ export default class ManagerSignatureForm extends React.Component {
         this.setState({
             templates: response.data
         });
+
+        for (let i = 0; i < response.data.length; i++) {
+            for (let j = 0; j < response.data[i].scheme.length; j++) {
+                let fieldName = camelize(response.data[i].scheme[j]);
+                initialValues[fieldName] = "";
+            }
+        }
     }
 
     async getSignature(index) {
