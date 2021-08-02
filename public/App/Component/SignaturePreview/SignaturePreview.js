@@ -1,33 +1,11 @@
 import * as React from "react";
 import Interweave from 'interweave';
-import {initTemplateVars} from "../../Util/ParseUtil";
+import {parseHtml} from "../../Util/ParseUtil";
 import "./signaturepreview.css";
 
 export default class SignaturePreview extends React.Component {
     constructor(props) {
         super(props);
-    }
-
-    parseHtml(template) {
-        const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
-        const templateVarsMatchesArr = Array.from(templateVarsMatches);
-        const defaultVarsValues = initTemplateVars(template);
-
-        templateVarsMatchesArr.forEach( value => {
-            const fullText = value[0];
-            const textWithoutBrackets = value[1];
-
-            if (textWithoutBrackets === "imageUrl" && this.props.imageUrl)
-            {
-                template = template.replace(fullText, this.props.imageUrl)
-            }
-            else
-            {
-                template = template.replace(fullText, this.props.changedVars[textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
-            }
-        });
-
-        return template;
     }
 
     render() {
@@ -41,7 +19,7 @@ export default class SignaturePreview extends React.Component {
                 }
                 {
                     (this.props.template)
-                        ? <Interweave content={this.parseHtml(this.props.template)} tagName={"div"}/>
+                        ? <Interweave content={parseHtml(this.props.template, this.props.imageUrl, this.props.changedVars)} tagName={"div"}/>
                         : <div/>
                 }
             </div>

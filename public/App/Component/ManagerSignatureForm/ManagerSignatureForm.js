@@ -5,12 +5,12 @@ import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {sendGetRequest, sendPostRequest} from "../../Util/RequestUtil";
 import {camelize} from "../../Util/StringUtil";
+import {parseHtml} from "../../Util/ParseUtil";
 import {RequestUrl} from "../../Model/RequestUrl";
 import {SiteHosts} from "../../Model/SiteHosts";
 import ImageLoader from "../ImageLoader/ImageLoader";
 // noinspection ES6CheckImport
 import {store} from 'react-notifications-component';
-import {initTemplateVars} from "../../Util/ParseUtil";
 
 let initialValues = {};
 let boxFormState = {};
@@ -170,32 +170,10 @@ export default class ManagerSignatureForm extends React.Component {
         }
     }
 
-    parseHtml(template) {
-        const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
-        const templateVarsMatchesArr = Array.from(templateVarsMatches);
-        const defaultVarsValues = initTemplateVars(template);
-
-        templateVarsMatchesArr.forEach( value => {
-            const fullText = value[0];
-            const textWithoutBrackets = value[1];
-
-            if (textWithoutBrackets === "imageUrl" && this.state.fileUrlForDb)
-            {
-                template = template.replace(fullText, this.state.fileUrlForDb)
-            }
-            else
-            {
-                template = template.replace(fullText, boxFormState[this.state.boxId][textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
-            }
-        });
-
-        return template;
-    }
-
     onSubmit = async () => {
         if (this.state.siteHost)
         {
-            const signature = this.state.mailBody + this.parseHtml(this.state.template);
+            const signature = this.state.mailBody + parseHtml(this.state.template, this.state.fileUrlForDb, boxFormState[this.state.boxId]);
             await this.saveSignature(this.state.boxId, signature);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
