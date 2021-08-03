@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Formik, Field, ErrorMessage, Form} from 'formik';
+import {ErrorMessage, Field, Form, Formik} from 'formik';
 import Select from 'react-select';
 import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -79,12 +79,12 @@ export default class ManagerSignatureForm extends React.Component {
         }
     }
 
-    async getSignature(index) {
+    async getSignature(boxId) {
         let signature = "<div></div>";
         let response, error;
         [response, error] = await sendGetRequest(RequestUrl.getSignature, {
             'user_id': 1,
-            'box_id': index
+            'box_id': boxId
         });
 
         if (error) {
@@ -97,20 +97,6 @@ export default class ManagerSignatureForm extends React.Component {
         }
 
         return signature;
-    }
-
-    async getTemplateStructure(index) {
-        let response, error;
-        [response, error] = await sendGetRequest(RequestUrl.getTemplateStructure, {
-            'template_id': index
-        });
-
-        if (error) {
-            console.log(error);
-            return null;
-        }
-
-        return response.data[0];
     }
 
     async saveSignature(boxId, signature) {
@@ -174,8 +160,7 @@ export default class ManagerSignatureForm extends React.Component {
     }
 
     onSubmit = async () => {
-        if (this.state.siteHost)
-        {
+        if (this.state.siteHost) {
             const signature = this.state.mailBody + parseHtml(this.state.template, this.state.fileUrlForDb, boxFormState[this.state.boxId]);
             await this.saveSignature(this.state.boxId, signature);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
@@ -194,9 +179,7 @@ export default class ManagerSignatureForm extends React.Component {
                     onScreen: true
                 }
             });
-        }
-        else
-        {
+        } else {
             store.addNotification({
                 title: "Error",
                 message: "Please select a site host",

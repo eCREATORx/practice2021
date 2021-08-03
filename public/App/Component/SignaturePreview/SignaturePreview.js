@@ -14,12 +14,14 @@ export default class SignaturePreview extends React.Component {
                 <h1>Editable</h1>
                 {
                     (this.props.mailBody)
-                    ? <Interweave content={this.props.mailBody} noWrap={true}/>
-                    : <div/>
+                        ? <Interweave content={this.props.mailBody} noWrap={true}/>
+                        : <div/>
                 }
                 {
                     (this.props.template)
-                        ? <Interweave content={parseHtml(this.props.template, this.props.imageUrl, this.props.changedVars)} tagName={"div"}/>
+                        ? <Interweave
+                            content={parseHtml(this.props.template, this.props.imageUrl, this.props.changedVars)}
+                            tagName={"div"}/>
                         : <div/>
                 }
             </div>

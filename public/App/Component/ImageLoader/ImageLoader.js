@@ -19,10 +19,8 @@ export default class ImageLoader extends React.Component {
         const file = files[0] ?? null;
         const errors = this.validateFile(file);
 
-        if (errors.length)
-        {
-            for (let i = 0; i < errors.length; i++)
-            {
+        if (errors.length) {
+            for (let i = 0; i < errors.length; i++) {
                 store.addNotification({
                     title: "Error",
                     message: errors[i],
@@ -37,9 +35,7 @@ export default class ImageLoader extends React.Component {
                     }
                 });
             }
-        }
-        else
-        {
+        } else {
             store.addNotification({
                 title: "Success",
                 message: "Image is good!",
@@ -66,10 +62,9 @@ export default class ImageLoader extends React.Component {
     }
 
     validateFile = file => {
-        let errors =  [];
+        let errors = [];
 
-        if (!file)
-        {
+        if (!file) {
             errors.push("Please select an image!");
             return errors;
         }
@@ -79,18 +74,15 @@ export default class ImageLoader extends React.Component {
         const maxImageSize = 5000000;
         const requiredImageType = "image/png";
 
-        if (imageType === requiredImageType && imageSize <= maxImageSize)
-        {
+        if (imageType === requiredImageType && imageSize <= maxImageSize) {
             return errors;
         }
 
-        if (imageType !== requiredImageType)
-        {
+        if (imageType !== requiredImageType) {
             errors.push("Please change image type (png expected, " + imageType.substring(6) + " given)");
         }
-        if (imageSize >= maxImageSize)
-        {
-            errors.push("Please change image size (less than 5Mb expected, " + imageSize/1000000 + "Mb given)");
+        if (imageSize >= maxImageSize) {
+            errors.push("Please change image size (less than 5Mb expected, " + imageSize / 1000000 + "Mb given)");
         }
 
         this.inputImage.current.value = "";

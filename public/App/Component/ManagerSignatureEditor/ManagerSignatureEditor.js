@@ -38,15 +38,15 @@ export default class ManagerSignatureEditor extends React.Component {
         });
     }
 
-    handleFileChange = fakeFileUrl => {
+    handleFileChange = fileUrlForPreview => {
         this.setState({
-            fileUrlForPreview: fakeFileUrl
+            fileUrlForPreview: fileUrlForPreview
         })
     }
 
-    setMailBodyValue = value => {
+    setMailBody = mailBody => {
         this.setState({
-            mailBody: value
+            mailBody: mailBody
         })
     }
 
@@ -63,7 +63,7 @@ export default class ManagerSignatureEditor extends React.Component {
                 onBoxChange={this.setPreviousSignature}
                 onTemplateChange={this.setTemplate}
                 onFormChange={this.setChangedVar}
-                onTextAreaChange={this.setMailBodyValue}
+                onTextAreaChange={this.setMailBody}
                 newSignature={this.state.newSignature}
             />
             <SignaturePreview
