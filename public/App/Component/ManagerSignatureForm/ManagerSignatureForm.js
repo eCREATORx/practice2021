@@ -143,12 +143,15 @@ export default class ManagerSignatureForm extends React.Component {
         this.resetButton.current.click();
         boxFormState[this.state.boxId] = {};
 
-        const template = await this.getTemplateStructure(selected.value);
-        this.setState({
-            fields: template.scheme,
-            template: template.content
-        });
-        this.props.onTemplateChange(template.content);
+        this.state.templates.forEach(template => {
+            if (template.id === selected.value) {
+                this.setState({
+                    fields: template.scheme,
+                    template: template.content
+                });
+                this.props.onTemplateChange(template.content);
+            }
+        })
     }
 
     onSiteHostChange = selected => {

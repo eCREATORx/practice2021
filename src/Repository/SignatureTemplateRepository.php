@@ -22,17 +22,7 @@ class SignatureTemplateRepository extends ServiceEntityRepository
     public function getTemplates(): array
     {
         return $this->createQueryBuilder('st')
-            ->select('st.id, st.name, st.scheme')
-            ->getQuery()
-            ->getArrayResult();
-    }
-
-    public function getTemplateStructure(int $templateId): array
-    {
-        return $this->createQueryBuilder('st')
-            ->select('st.scheme, st.content')
-            ->where('st.id = :id')
-            ->setParameter('id', $templateId)
+            ->select('st.id, st.name, st.scheme, st.content')
             ->getQuery()
             ->getArrayResult();
     }

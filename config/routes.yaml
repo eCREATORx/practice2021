@@ -14,10 +14,6 @@ get_signature:
     path: /get_signature
     controller: App\Controller\SignatureController::getSignature
 
-get_template_structure:
-    path: /get_template_structure
-    controller: App\Controller\SignatureController::getTemplateStructure
-
 save_signature:
     path: /save_signature
     controller: App\Controller\SignatureController::saveSignature

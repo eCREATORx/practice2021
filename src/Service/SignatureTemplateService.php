@@ -22,11 +22,4 @@ class SignatureTemplateService
         $signatureTemplateRepository = $this->entityManager->getRepository(SignatureTemplate::class);
         return $signatureTemplateRepository->getTemplates();
     }
-
-    public function getTemplateStructure(int $templateId): array
-    {
-        /** @var SignatureTemplateRepository $signatureTemplateRepository */
-        $signatureTemplateRepository = $this->entityManager->getRepository(SignatureTemplate::class);
-        return $signatureTemplateRepository->getTemplateStructure($templateId);
-    }
 }
