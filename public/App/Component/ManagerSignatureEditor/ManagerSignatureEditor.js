@@ -14,8 +14,7 @@ export default class ManagerSignatureEditor extends React.Component {
             previousSignature: "",
             template: "",
             fileUrlForPreview: "",
-            changedVars: changedVars,
-            newSignature: ""
+            changedVars: changedVars
         }
     }
 
@@ -50,12 +49,6 @@ export default class ManagerSignatureEditor extends React.Component {
         })
     }
 
-    setNewSignature = signature => {
-        this.setState({
-            newSignature: signature
-        })
-    }
-
     render() {
         return <div className={"editor"}>
             <ManagerSignatureForm
@@ -64,7 +57,6 @@ export default class ManagerSignatureEditor extends React.Component {
                 onTemplateChange={this.setTemplate}
                 onFormChange={this.setChangedVar}
                 onTextAreaChange={this.setMailBody}
-                newSignature={this.state.newSignature}
             />
             <SignaturePreview
                 mailBody={this.state.mailBody}
@@ -72,7 +64,6 @@ export default class ManagerSignatureEditor extends React.Component {
                 template={this.state.template}
                 imageUrl={this.state.fileUrlForPreview}
                 changedVars={this.state.changedVars}
-                onSignatureChange={this.setNewSignature}
             />
         </div>
     }
