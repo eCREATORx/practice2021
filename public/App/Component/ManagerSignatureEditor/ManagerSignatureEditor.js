@@ -3,9 +3,9 @@ import ManagerSignatureForm from "../ManagerSignatureForm/ManagerSignatureForm";
 import SignaturePreview from "../SignaturePreview/SignaturePreview";
 import "./managersignatureeditor.css";
 
-let changedVars = {};
-
 export default class ManagerSignatureEditor extends React.Component {
+    changedVars = {};
+
     constructor(props) {
         super(props);
 
@@ -14,7 +14,7 @@ export default class ManagerSignatureEditor extends React.Component {
             previousSignature: "",
             template: "",
             fileUrlForPreview: "",
-            changedVars: changedVars
+            changedVars: this.changedVars
         }
     }
 
@@ -31,9 +31,9 @@ export default class ManagerSignatureEditor extends React.Component {
     }
 
     setChangedVar = (field, value) => {
-        changedVars[field] = value;
+        this.changedVars[field] = value;
         this.setState({
-            changedVars: changedVars
+            changedVars: this.changedVars
         });
     }
 
