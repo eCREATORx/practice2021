@@ -22,18 +22,19 @@ export default class ImageLoader extends React.Component {
             for (let i = 0; i < errors.length; i++) {
                 showErrorMessage(errors[i]);
             }
-        } else {
-            showSuccessMessage("Image is good!");
-
-            const fileUrlForPreview = URL.createObjectURL(file);
-            const fileUrlForDb = "Data/" + file.name;
-
-            this.setState({
-                imageUrl: fileUrlForPreview
-            });
-
-            this.props.onImageChange(fileUrlForPreview, fileUrlForDb);
+            return;
         }
+
+        showSuccessMessage("Image is good!");
+
+        const fileUrlForPreview = URL.createObjectURL(file);
+        const fileUrlForDb = "Data/" + file.name;
+
+        this.setState({
+            imageUrl: fileUrlForPreview
+        });
+
+        this.props.onImageChange(fileUrlForPreview, fileUrlForDb);
     }
 
     validateFile = file => {

@@ -165,10 +165,11 @@ export default class ManagerSignatureForm extends React.Component {
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
 
-            showSuccessMessage("Signature is saved!");
-        } else {
-            showErrorMessage("Please select a site host");
+            showSuccessMessage("Signature is good!");
+            return;
         }
+
+        showErrorMessage("Please select a site host");
     }
 
     onTextAreaChange(event, props) {
