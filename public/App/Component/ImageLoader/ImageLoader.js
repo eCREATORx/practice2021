@@ -70,22 +70,22 @@ export default class ImageLoader extends React.Component {
         }
 
         const imageSize = file.size;
-        const imageType = file.type;
+        const imageType = file.type.split('/')[1];
         const maxImageSize = 5000000;
-        const requiredImageType = "image/png";
+        const mbSize = 1000000;
+        const requiredImageType = "png";
 
         if (imageType === requiredImageType && imageSize <= maxImageSize) {
             return errors;
         }
 
         if (imageType !== requiredImageType) {
-            errors.push("Please change image type (png expected, " + imageType.substring(6) + " given)");
+            errors.push("Please change image type (png expected, " + imageType + " given)");
         }
         if (imageSize >= maxImageSize) {
-            errors.push("Please change image size (less than 5Mb expected, " + imageSize / 1000000 + "Mb given)");
+            errors.push("Please change image size (less than 5Mb expected, " + imageSize / mbSize + "Mb given)");
         }
 
-        this.inputImage.current.value = "";
         return errors;
     }
 
