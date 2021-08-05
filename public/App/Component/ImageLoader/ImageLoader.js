@@ -1,8 +1,7 @@
 import * as React from "react";
 import "./imageloader.css";
 import "bootstrap/dist/css/bootstrap.css";
-// noinspection ES6CheckImport
-import {store} from 'react-notifications-component';
+import {showErrorMessage, showSuccessMessage} from "../../Util/NotificationUtil";
 
 export default class ImageLoader extends React.Component {
     constructor(props) {
@@ -21,34 +20,10 @@ export default class ImageLoader extends React.Component {
 
         if (errors.length) {
             for (let i = 0; i < errors.length; i++) {
-                store.addNotification({
-                    title: "Error",
-                    message: errors[i],
-                    type: "danger",
-                    insert: "top",
-                    container: "bottom-center",
-                    animationIn: ["animate__animated", "animate__fadeIn"],
-                    animationOut: ["animate__animated", "animate__fadeOut"],
-                    dismiss: {
-                        duration: 5000,
-                        onScreen: true
-                    }
-                });
+                showErrorMessage(errors[i]);
             }
         } else {
-            store.addNotification({
-                title: "Success",
-                message: "Image is good!",
-                type: "success",
-                insert: "top",
-                container: "bottom-center",
-                animationIn: ["animate__animated", "animate__fadeIn"],
-                animationOut: ["animate__animated", "animate__fadeOut"],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                }
-            });
+            showSuccessMessage("Image is good!");
 
             const fileUrlForPreview = URL.createObjectURL(file);
             const fileUrlForDb = "Data/" + file.name;

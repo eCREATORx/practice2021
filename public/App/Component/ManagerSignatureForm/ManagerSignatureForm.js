@@ -9,8 +9,7 @@ import {parseHtml} from "../../Util/ParseUtil";
 import {RequestUrl} from "../../Model/RequestUrl";
 import {SiteHosts} from "../../Model/SiteHosts";
 import ImageLoader from "../ImageLoader/ImageLoader";
-// noinspection ES6CheckImport
-import {store} from 'react-notifications-component';
+import {showErrorMessage, showSuccessMessage} from "../../Util/NotificationUtil";
 
 let initialValues = {};
 let boxFormState = {};
@@ -166,33 +165,9 @@ export default class ManagerSignatureForm extends React.Component {
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
 
-            store.addNotification({
-                title: "Success",
-                message: "Signature is saved!",
-                type: "success",
-                insert: "top",
-                container: "bottom-center",
-                animationIn: ["animate__animated", "animate__fadeIn"],
-                animationOut: ["animate__animated", "animate__fadeOut"],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                }
-            });
+            showSuccessMessage("Signature is saved!");
         } else {
-            store.addNotification({
-                title: "Error",
-                message: "Please select a site host",
-                type: "danger",
-                insert: "top",
-                container: "bottom-center",
-                animationIn: ["animate__animated", "animate__fadeIn"],
-                animationOut: ["animate__animated", "animate__fadeOut"],
-                dismiss: {
-                    duration: 5000,
-                    onScreen: true
-                }
-            });
+            showErrorMessage("Please select a site host");
         }
     }
 
