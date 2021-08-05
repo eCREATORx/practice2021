@@ -5,7 +5,7 @@ import "./managersignatureform.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {sendGetRequest, sendPostRequest} from "../../Util/RequestUtil";
 import {camelize} from "../../Util/StringUtil";
-import {parseHtml} from "../../Util/ParseUtil";
+import {parseHtml} from "../ManagerSignatureEditor/ManagerSignatureEditor";
 import {RequestUrl} from "../../Model/RequestUrl";
 import {SiteHosts} from "../../Model/SiteHosts";
 import ImageLoader from "../ImageLoader/ImageLoader";

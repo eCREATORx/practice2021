@@ -1,6 +1,6 @@
 import * as React from "react";
 import Interweave from 'interweave';
-import {parseHtml} from "../../Util/ParseUtil";
+import {parseHtml} from "../ManagerSignatureEditor/ManagerSignatureEditor";
 import "./signaturepreview.css";
 
 export default class SignaturePreview extends React.Component {
