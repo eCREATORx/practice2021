@@ -11,10 +11,10 @@ import {SiteHosts} from "../../Model/SiteHosts";
 import ImageLoader from "../ImageLoader/ImageLoader";
 import {showErrorMessage, showSuccessMessage} from "../../Util/NotificationUtil";
 
-let initialValues = {};
-let boxFormState = {};
-
 export default class ManagerSignatureForm extends React.Component {
+    boxFormState = {};
+    initialValues = {};
+
     constructor(props) {
         super(props);
 
@@ -53,7 +53,7 @@ export default class ManagerSignatureForm extends React.Component {
             boxes: response.data
         });
         response.data.forEach(box => {
-            boxFormState[box.id] = {}
+            this.boxFormState[box.id] = {}
         });
     }
 
@@ -73,7 +73,7 @@ export default class ManagerSignatureForm extends React.Component {
         for (let i = 0; i < response.data.length; i++) {
             for (let j = 0; j < response.data[i].scheme.length; j++) {
                 let fieldName = camelize(response.data[i].scheme[j]);
-                initialValues[fieldName] = "";
+                this.initialValues[fieldName] = "";
             }
         }
     }
@@ -118,15 +118,15 @@ export default class ManagerSignatureForm extends React.Component {
             boxId: selected.value
         });
 
-        const fields = Object.keys(boxFormState[selected.value]);
+        const fields = Object.keys(this.boxFormState[selected.value]);
         for (const field of fields) {
-            props.setFieldValue(field, boxFormState[selected.value][field]);
+            props.setFieldValue(field, this.boxFormState[selected.value][field]);
         }
     }
 
     onSignatureTemplateChange = async selected => {
         this.resetButton.current.click();
-        boxFormState[this.state.boxId] = {};
+        this.boxFormState[this.state.boxId] = {};
 
         this.state.templates.forEach(template => {
             if (template.id === selected.value) {
@@ -142,7 +142,7 @@ export default class ManagerSignatureForm extends React.Component {
     onSiteHostChange = selected => {
         this.props.onFormChange("siteHost", selected.value);
         if (this.state.boxId) {
-            boxFormState[this.state.boxId]["siteHost"] = selected.value;
+            this.boxFormState[this.state.boxId]["siteHost"] = selected.value;
         }
         this.setState({
             siteHost: selected.value
@@ -154,13 +154,13 @@ export default class ManagerSignatureForm extends React.Component {
         event.target.value ? event.target.classList.remove('is-invalid') : event.target.classList.add('is-invalid');
         this.props.onFormChange(event.target.name, event.target.value);
         if (this.state.boxId) {
-            boxFormState[this.state.boxId][event.target.name] = event.target.value;
+            this.boxFormState[this.state.boxId][event.target.name] = event.target.value;
         }
     }
 
     onSubmit = async () => {
         if (this.state.siteHost) {
-            const signature = this.state.mailBody + parseHtml(this.state.template, this.state.fileUrlForDb, boxFormState[this.state.boxId]);
+            const signature = this.state.mailBody + parseHtml(this.state.template, this.state.fileUrlForDb, this.boxFormState[this.state.boxId]);
             await this.saveSignature(this.state.boxId, signature);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
@@ -199,7 +199,7 @@ export default class ManagerSignatureForm extends React.Component {
 
     render() {
         return <Formik
-            initialValues={initialValues}
+            initialValues={this.initialValues}
             validateOnBlur={false}
             onSubmit={this.onSubmit}
         >
@@ -256,7 +256,7 @@ export default class ManagerSignatureForm extends React.Component {
                                                 <label className={"form-label"}>{field}</label>
                                                 <Select
                                                     value={this.state.boxId
-                                                        ? SiteHosts.find(siteHost => siteHost.value === boxFormState[this.state.boxId].siteHost) || null
+                                                        ? SiteHosts.find(siteHost => siteHost.value === this.boxFormState[this.state.boxId].siteHost) || null
                                                         : null}
                                                     placeholder={"Site host"}
                                                     options={SiteHosts}
