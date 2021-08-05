@@ -2,42 +2,46 @@ import * as React from "react";
 import ManagerSignatureForm from "../ManagerSignatureForm/ManagerSignatureForm";
 import SignaturePreview from "../SignaturePreview/SignaturePreview";
 import "./managersignatureeditor.css";
+import {camelize} from "../../Util/StringUtil";
 
-export const initTemplateVars = template => {
-    const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
-    const templateVarsMatchesArr = Array.from(templateVarsMatches);
+export const initTemplateVars = (template, fields) => {
+    let templateVarsMatchesArr = [["{imageUrl}", "imageUrl"]];
+    fields.forEach(field => {
+        const fieldName = camelize(field);
+        const fieldNameBrackets = '{' + fieldName + '}';
+        templateVarsMatchesArr.push([fieldNameBrackets, fieldName]);
+    });
 
-    let templateVars = {};
+    let defaultVarsValues = {};
 
     templateVarsMatchesArr.forEach(value => {
         const textWithoutBrackets = value[1];
         if (textWithoutBrackets !== "imageUrl") {
-            templateVars = Object.assign(templateVars, {
+            defaultVarsValues = Object.assign(defaultVarsValues, {
                 [textWithoutBrackets]: 'Your ' + textWithoutBrackets
             })
         } else {
-            templateVars = Object.assign(templateVars, {
+            defaultVarsValues = Object.assign(defaultVarsValues, {
                 [textWithoutBrackets]: ""
             })
         }
     })
 
-    return templateVars;
+    return [templateVarsMatchesArr, defaultVarsValues];
 }
 
-export const parseHtml = (template, imageUrl, changedVars) => {
-    const templateVarsMatches = template.matchAll(/{(.*?)}/gim);
-    const templateVarsMatchesArr = Array.from(templateVarsMatches);
-    const defaultVarsValues = initTemplateVars(template);
+export const parseHtml = (template, fields, imageUrl, changedVars) => {
+    let templateVarsMatchesArr, defaultVarsValues;
+    [templateVarsMatchesArr, defaultVarsValues] = initTemplateVars(template, fields);
 
     templateVarsMatchesArr.forEach(value => {
         const fullText = value[0];
         const textWithoutBrackets = value[1];
 
         if (textWithoutBrackets === "imageUrl" && imageUrl) {
-            template = template.replace(fullText, imageUrl)
+            template = template.replaceAll(fullText, imageUrl)
         } else {
-            template = template.replace(fullText, changedVars[textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
+            template = template.replaceAll(fullText, changedVars[textWithoutBrackets] ?? defaultVarsValues[textWithoutBrackets]);
         }
     });
 
@@ -54,6 +58,7 @@ export default class ManagerSignatureEditor extends React.Component {
             mailBody: "",
             previousSignature: "",
             template: "",
+            fields: [],
             fileUrlForPreview: "",
             changedVars: this.changedVars
         }
@@ -65,9 +70,10 @@ export default class ManagerSignatureEditor extends React.Component {
         })
     }
 
-    setTemplate = template => {
+    setTemplate = (template, fields) => {
         this.setState({
-            template: template
+            template: template,
+            fields: fields
         })
     }
 
@@ -103,6 +109,7 @@ export default class ManagerSignatureEditor extends React.Component {
                 mailBody={this.state.mailBody}
                 signature={this.state.previousSignature}
                 template={this.state.template}
+                fields={this.state.fields}
                 imageUrl={this.state.fileUrlForPreview}
                 changedVars={this.state.changedVars}
             />

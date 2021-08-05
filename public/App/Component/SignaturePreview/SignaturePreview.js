@@ -20,7 +20,7 @@ export default class SignaturePreview extends React.Component {
                 {
                     (this.props.template)
                         ? <Interweave
-                            content={parseHtml(this.props.template, this.props.imageUrl, this.props.changedVars)}
+                            content={parseHtml(this.props.template, this.props.fields, this.props.imageUrl, this.props.changedVars)}
                             tagName={"div"}/>
                         : <div/>
                 }

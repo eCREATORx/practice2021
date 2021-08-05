@@ -134,7 +134,7 @@ export default class ManagerSignatureForm extends React.Component {
                     fields: template.scheme,
                     template: template.content
                 });
-                this.props.onTemplateChange(template.content);
+                this.props.onTemplateChange(template.content, template.scheme);
             }
         })
     }
@@ -160,7 +160,7 @@ export default class ManagerSignatureForm extends React.Component {
 
     onSubmit = async () => {
         if (this.state.siteHost) {
-            const signature = this.state.mailBody + parseHtml(this.state.template, this.state.fileUrlForDb, this.boxFormState[this.state.boxId]);
+            const signature = this.state.mailBody + parseHtml(this.state.template, this.state.fields, this.state.fileUrlForDb, this.boxFormState[this.state.boxId]);
             await this.saveSignature(this.state.boxId, signature);
             await sendPostRequest(RequestUrl.uploadImage, new FormData(this.form.current), {});
             this.props.onBoxChange(await this.getSignature(this.state.boxId));
